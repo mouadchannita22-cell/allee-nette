@@ -14,7 +14,14 @@ import "server-only";
 import { Resend } from "resend";
 import { estRenseigne, site } from "@/config/site";
 import { enProduction } from "@/lib/environnement";
-import { courrielAssocies, courrielClient, modeEnvoi, type DemandePreparee, type PhotoJointe } from "./emails";
+import {
+  courrielAssocies,
+  courrielClient,
+  modeEnvoi,
+  type ConfigurationEnvoi,
+  type DemandePreparee,
+  type PhotoJointe,
+} from "./emails";
 
 /** Photo vérifiée, avec son contenu. */
 export type PhotoAEnvoyer = PhotoJointe & { contenu: Uint8Array };
@@ -43,12 +50,24 @@ async function envoyer(envoi: () => Promise<ReponseResend>): Promise<string | nu
   }
 }
 
+function configuration(): ConfigurationEnvoi {
+  return {
+    cle: process.env.RESEND_API_KEY?.trim() ?? "",
+    expediteur: process.env.RESERVATION_EXPEDITEUR?.trim() ?? "",
+    destinataires: [site.associes.A.email, site.associes.B.email].filter(estRenseigne),
+    production: enProduction(),
+  };
+}
+
+/** Mode d'envoi en vigueur : la route le vérifie avant de consommer une référence. */
+export function modeEnvoiActuel(): ReturnType<typeof modeEnvoi> {
+  return modeEnvoi(configuration());
+}
+
 /** Envoie la demande aux associés (photos jointes), puis la confirmation au client. */
 export async function envoyerDemande(d: DemandeAEnvoyer): Promise<ResultatEnvoi> {
-  const cle = process.env.RESEND_API_KEY?.trim() ?? "";
-  const expediteur = process.env.RESERVATION_EXPEDITEUR?.trim() ?? "";
-  const destinataires = [site.associes.A.email, site.associes.B.email].filter(estRenseigne);
-  const mode = modeEnvoi({ cle, expediteur, destinataires, production: enProduction() });
+  const { cle, expediteur, destinataires, production } = configuration();
+  const mode = modeEnvoi({ cle, expediteur, destinataires, production });
 
   if (mode === "demo") {
     const statut = d.devis.statut === "estimation" ? `${d.devis.total} €` : d.devis.statut;
