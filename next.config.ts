@@ -14,6 +14,12 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   poweredByHeader: false,
+  env: {
+    // Contexte Netlify (production, deploy-preview, branch-deploy, dev), fiable
+    // seulement au build : recopié ici pour le serveur (lib/environnement.ts).
+    // Jamais de secret dans cette liste : elle est inscrite dans le code compilé.
+    CONTEXTE_DEPLOIEMENT: process.env.CONTEXT ?? "",
+  },
   images: {
     formats: ["image/avif", "image/webp"],
   },
