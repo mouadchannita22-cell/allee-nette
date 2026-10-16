@@ -789,6 +789,29 @@ body:has(main > .theme-sombre:last-child) .vague-fond {
 }
 
 /* ==========================================================================
+   Réservation (/reserver et /reserver/merci)
+   ========================================================================== */
+
+/* Le formulaire a sa propre barre en bas d'écran (total estimé) : la barre
+   « Réserver, Appeler, WhatsApp » du site s'efface, avec la marge qui lui
+   était réservée. Sans JavaScript aussi. */
+body:has([data-sans-barre-mobile]) {
+  padding-bottom: 0;
+}
+
+body:has([data-sans-barre-mobile]) [data-barre-mobile] {
+  display: none;
+}
+
+/* Un champ amené à l'écran (lien du résumé d'erreurs…) ne se cache pas sous
+   la barre du bas ; FormulaireReservation corrige aussi le focus au clavier. */
+@media (width < 64rem) {
+  html:has([data-barre-estimation]) {
+    scroll-padding-bottom: 8.5rem;
+  }
+}
+
+/* ==========================================================================
    Mouvement réduit : aucune animation, aucune transition, tout reste visible.
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {

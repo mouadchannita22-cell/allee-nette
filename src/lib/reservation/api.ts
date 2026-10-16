@@ -6,7 +6,7 @@
 import { PHOTOS_DEMANDEES, type PhotoId } from "@/data/reservation";
 import type { AntiSpam } from "./anti-spam";
 import { extensionImage } from "./photos";
-import type { DonneesFormulaire, ErreursChamps } from "./schema";
+import type { DonneesFormulaire, ErreursChamps } from "./formulaire";
 
 export const URL_API_RESERVATION = "/api/reservation";
 

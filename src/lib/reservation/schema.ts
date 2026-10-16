@@ -18,73 +18,17 @@ import {
   SIEGES_ENFANT_MAX,
   SOURCES_CONNAISSANCE,
   TYPES_EMPLACEMENT,
-  type ModePaiement,
   type NumeroEtape,
-  type ReponsePrise,
-  type SourceConnaissance,
-  type TypeEmplacement,
 } from "@/data/reservation";
-import type { EtatCalculateur } from "@/lib/devis-url";
-import { nettoyerSource, type SourceVisite } from "@/lib/source-visite";
+import { nettoyerSource } from "@/lib/source-visite";
 import { normaliserTelephone } from "@/lib/telephone";
 import { creneauAutorise, lireCreneau } from "./creneaux";
 import { blocageDevis, devisReservation } from "./devis";
-import { voitureDepuisVehicule, type VoitureFormulaire } from "./voiture";
+import { LONGUEURS, type DonneesFormulaire, type ErreursChamps } from "./formulaire";
 
-// ---------------------------------------------------------------------------
-// Données du formulaire (état React) et valeurs de départ
-// ---------------------------------------------------------------------------
-
-/** État complet du formulaire. "" : pas encore de réponse. */
-export type DonneesFormulaire = {
-  voitures: VoitureFormulaire[];
-  lieu: {
-    /** Numéro et rue. */
-    adresse: string;
-    commune: string;
-    emplacement: TypeEmplacement | "";
-    prise: ReponsePrise | "";
-  };
-  /** Trois créneaux par ordre de préférence (identifiants de `creneauxDisponibles`), "" si vide. */
-  creneaux: string[];
-  coordonnees: {
-    prenom: string;
-    telephone: string;
-    email: string;
-    connaissance: SourceConnaissance | "";
-    code: string;
-  };
-  paiement: ModePaiement | "";
-  validation: { cgv: boolean; executionAnticipee: boolean; donnees: boolean; offres: boolean };
-  /** Source de la visite (lib/source-visite.ts), jointe au moment de l'envoi. */
-  source: SourceVisite;
-};
-
-/** Longueurs maximales, à reprendre dans les attributs `maxLength` des champs. */
-export const LONGUEURS = {
-  modele: 60,
-  adresse: 120,
-  commune: 80,
-  prenom: 60,
-  telephone: 30,
-  email: 120,
-  code: 20,
-} as const;
-
-/** Formulaire prérempli depuis l'URL du calculateur (`depuisParametres`). */
-export function formulaireInitial(depart?: EtatCalculateur): DonneesFormulaire {
-  const code = depart?.code ?? "";
-  const connaissance: SourceConnaissance | "" = code === "GARAGE" ? "garagiste" : code === "VOISIN" ? "voisin" : "";
-  return {
-    voitures: (depart?.vehicules ?? [{ formule: "complet", gabarit: "M" }]).map((v) => voitureDepuisVehicule(v)),
-    lieu: { adresse: "", commune: depart?.commune ?? "", emplacement: "", prise: "" },
-    creneaux: Array.from({ length: REGLES_CRENEAUX.nombreDemandes }, () => ""),
-    coordonnees: { prenom: "", telephone: "", email: "", connaissance, code },
-    paiement: "",
-    validation: { cgv: false, executionAnticipee: false, donnees: false, offres: false },
-    source: {},
-  };
-}
+// Données du formulaire, longueurs et valeurs de départ : dans formulaire.ts,
+// sans Zod, pour que le navigateur ne charge Zod qu'au moment de vérifier.
+export { LONGUEURS, formulaireInitial, type DonneesFormulaire, type ErreursChamps } from "./formulaire";
 
 // ---------------------------------------------------------------------------
 // Briques
@@ -259,14 +203,6 @@ export type DemandeReservation = z.output<ReturnType<typeof creerSchemaReservati
 // ---------------------------------------------------------------------------
 // Erreurs par étape
 // ---------------------------------------------------------------------------
-
-/**
- * Erreurs par champ, en français. Clé : chemin du champ joint par des points
- * (« voitures.0.modele », « lieu.commune », « creneaux.0 », « validation.cgv »).
- * La clé « devis » porte un blocage de l'estimation (zone 2 avec L'Intérieur
- * Net, commande minimale…).
- */
-export type ErreursChamps = Record<string, string>;
 
 /** Première erreur de chaque champ. */
 export function erreursDepuisZod(erreur: z.ZodError): ErreursChamps {
