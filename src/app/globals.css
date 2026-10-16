@@ -213,6 +213,15 @@
   }
 }
 
+/* La vague prolonge la dernière section : claire par défaut, sombre si la page finit en sombre. */
+.vague-fond {
+  background-color: var(--color-ecume);
+}
+
+body:has(main > .theme-sombre:last-child) .vague-fond {
+  background-color: var(--color-nuit);
+}
+
 .vague-anim {
   animation: vague 18s linear infinite;
 }

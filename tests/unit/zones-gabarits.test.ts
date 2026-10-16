@@ -45,6 +45,8 @@ describe("zones (préréglage Saintes)", () => {
     expect(r[0]).toBe("Saintes");
     expect(r).toContain("Saint-Porchaire");
     expect(rechercherCommunes("porch", 10, saintes).map((c) => c.nom)).toEqual(["Saint-Porchaire"]);
+    // Le nom le plus court d'abord.
+    expect(rechercherCommunes("pon", 2, saintes).map((c) => c.nom)).toEqual(["Pons", "Pont-l'Abbé-d'Arnoult"]);
     expect(rechercherCommunes("port", 10, saintes).map((c) => c.nom)).toEqual(["Port-d'Envaux"]);
   });
 

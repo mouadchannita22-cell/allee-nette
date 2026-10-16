@@ -7,7 +7,7 @@ const VAGUE_ARRIERE =
 /** Vague animée posée au-dessus du pied de page. */
 export function Vague() {
   return (
-    <div aria-hidden="true" className="relative -mb-px h-14 overflow-hidden sm:h-20">
+    <div aria-hidden="true" className="vague-fond relative -mb-px h-14 overflow-hidden sm:h-20">
       <svg
         className="vague-anim-lente absolute bottom-0 left-0 h-full w-[200%]"
         viewBox="0 0 2880 120"

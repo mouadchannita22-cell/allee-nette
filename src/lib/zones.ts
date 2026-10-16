@@ -45,5 +45,7 @@ export function rechercherCommunes(
     if (nom.startsWith(cible)) debut.push(c);
     else if (nom.includes(cible)) milieu.push(c);
   }
+  // Le nom le plus court d'abord : « pon » propose Pons avant Pont-l'Abbé-d'Arnoult.
+  debut.sort((a, b) => a.nom.length - b.nom.length || a.nom.localeCompare(b.nom, "fr"));
   return [...debut, ...milieu].slice(0, limite);
 }
