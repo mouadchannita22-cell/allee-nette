@@ -19,7 +19,8 @@ import { getStore } from "@netlify/blobs";
 import { anneeParis } from "@/lib/date-paris";
 import { contexteDeploiement, enProduction } from "@/lib/environnement";
 
-export const FORMAT_REFERENCE = /^AN-\d{4}-\d{4}$/;
+// Format défini dans api.ts, que le navigateur lit aussi (sans charger @netlify/blobs).
+export { FORMAT_REFERENCE } from "./api";
 
 /** AN-2026-0042. Numéro de 1 à 9999. */
 export function formaterReference(annee: number, numero: number): string {

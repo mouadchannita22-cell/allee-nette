@@ -28,7 +28,7 @@ import {
   TYPES_EMPLACEMENT,
   libelleDe,
 } from "@/data/reservation";
-import { lienWhatsApp } from "@/lib/contact";
+import { lienWhatsAppPhotos } from "@/lib/contact";
 import { formaterDateHeureParis } from "@/lib/date-paris";
 import { MENTION_ESTIMATION, type LigneDevis, type ResultatDevis } from "@/lib/prix";
 import { LIBELLES_SOURCE } from "@/lib/source-visite";
@@ -291,10 +291,8 @@ export function lienWhatsAppClient(telephone: string, prenom: string, reference:
   return `https://wa.me/${numero}?text=${encodeURIComponent(message)}`;
 }
 
-/** Lien WhatsApp du client vers nous, pour envoyer ses photos. `null` si notre numéro n'est pas renseigné. */
-export function lienWhatsAppPhotos(reference: string): string | null {
-  return lienWhatsApp(`Bonjour ${site.nom}, voici les photos de ma demande ${reference}.`);
-}
+// Lien WhatsApp du client vers nous, pour ses photos : partagé avec la page de remerciement.
+export { lienWhatsAppPhotos };
 
 // ---------------------------------------------------------------------------
 // E-mail aux associés

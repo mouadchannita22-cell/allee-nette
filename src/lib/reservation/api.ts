@@ -10,6 +10,9 @@ import type { DonneesFormulaire, ErreursChamps } from "./formulaire";
 
 export const URL_API_RESERVATION = "/api/reservation";
 
+/** Référence d'une demande : AN-AAAA-NNNN (AN-2026-0142). */
+export const FORMAT_REFERENCE = /^AN-\d{4}-\d{4}$/;
+
 /** Nom du champ JSON de l'envoi. */
 export const CHAMP_DONNEES = "donnees";
 
@@ -43,7 +46,7 @@ const MESSAGE_ILLISIBLE = "La réponse du serveur est illisible. Réessayez dans
 export function lireReponse(json: unknown): ReponseReservation {
   if (typeof json !== "object" || json === null) return { ok: false, message: MESSAGE_ILLISIBLE };
   const r = json as Record<string, unknown>;
-  if (r.ok === true && typeof r.reference === "string") {
+  if (r.ok === true && typeof r.reference === "string" && FORMAT_REFERENCE.test(r.reference)) {
     return { ok: true, reference: r.reference, ...(r.demo === true ? { demo: true } : {}) };
   }
   const message = typeof r.message === "string" && r.message ? r.message : MESSAGE_ILLISIBLE;

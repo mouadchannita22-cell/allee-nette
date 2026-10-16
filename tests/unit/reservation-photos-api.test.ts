@@ -111,5 +111,8 @@ describe("échange avec la route", () => {
     });
     expect(lireReponse("<html>")).toMatchObject({ ok: false });
     expect(lireReponse({ ok: true })).toMatchObject({ ok: false });
+    // La référence sert d'adresse à la page de remerciement : seul le format AN-AAAA-NNNN passe.
+    expect(lireReponse({ ok: true, reference: "AN-2026-1/../x" })).toMatchObject({ ok: false });
+    expect(lireReponse({ ok: true, reference: "<b>AN-2026-0001</b>" })).toMatchObject({ ok: false });
   });
 });

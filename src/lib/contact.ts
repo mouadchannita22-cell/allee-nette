@@ -15,6 +15,11 @@ export function lienWhatsApp(message?: string): string | null {
   return `https://wa.me/${numero}${message ? `?text=${encodeURIComponent(message)}` : ""}`;
 }
 
+/** Lien WhatsApp du client vers nous, pour envoyer ses photos avec sa référence. `null` si non renseigné. */
+export function lienWhatsAppPhotos(reference: string): string | null {
+  return lienWhatsApp(`Bonjour ${site.nom}, voici les photos de ma demande ${reference}.`);
+}
+
 /** Lien `mailto:`, ou `null` si l'adresse n'est pas renseignée. */
 export function lienEmail(): string | null {
   return estRenseigne(site.email) ? `mailto:${site.email}` : null;

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { site } from "@/config/site";
 import { formule as trouverFormule, type FormuleId } from "@/data/offres";
@@ -13,6 +14,8 @@ import {
 import { suivre } from "@/lib/analytics";
 import { devinerGabarit } from "@/lib/gabarit";
 import { basculerOption } from "@/lib/prix";
+import { NOM_CHAMP_PIEGE, attenteAvantEnvoi } from "@/lib/reservation/anti-spam";
+import { URL_API_RESERVATION, corpsEnvoi, lireReponse } from "@/lib/reservation/api";
 import { etapeDuChamp, idChamp } from "@/lib/reservation/champs";
 import { creneauxDisponibles } from "@/lib/reservation/creneaux";
 import { devisReservation, effetDuCode } from "@/lib/reservation/devis";
@@ -24,10 +27,12 @@ import {
   nouvelleVoiture,
   type VoitureFormulaire,
 } from "@/lib/reservation/voiture";
+import { lireSourceVisite } from "@/lib/source-visite";
 import { trouverCommune } from "@/lib/zones";
 import type { EtatCommune } from "@/components/tarifs/ChampCommune";
 import { Bouton } from "@/components/ui/Bouton";
 import { compresserPhoto } from "./compression";
+import { retenirDemande } from "./derniere-demande";
 import { EtapeCoordonnees } from "./EtapeCoordonnees";
 import { EtapeCreneaux } from "./EtapeCreneaux";
 import { EtapeFormule } from "./EtapeFormule";
@@ -92,6 +97,7 @@ function erreursRestantes(tentative: ErreursChamps | undefined, actuelles: Erreu
  * Chaque étape est vérifiée avant la suivante ; le total estimé reste visible.
  */
 export function FormulaireReservation({ initial }: Props) {
+  const router = useRouter();
   const [donnees, setDonnees] = useState(initial);
   const [commune, setCommune] = useState(() => etatCommune(initial.lieu.commune));
   const [etape, setEtape] = useState<NumeroEtape>(1);
@@ -105,7 +111,9 @@ export function FormulaireReservation({ initial }: Props) {
   const [maintenant] = useState(() => new Date());
   const [verification, setVerification] = useState<Verification | null>(null);
 
+  const piege = useRef<HTMLInputElement>(null);
   const etapesVues = useRef(new Set<number>());
+  const envoiEnCours = useRef(false);
   // Dernière compression demandée par photo : une compression plus ancienne qui finit après est ignorée.
   const compressions = useRef<Partial<Record<PhotoId, number>>>({});
   // Aperçus affichés (adresses blob:), libérés quand la photo change ou quand le formulaire disparaît.
@@ -300,10 +308,69 @@ export function FormulaireReservation({ initial }: Props) {
     if (await verifier(etape)) aller(NOMBRE_ETAPES);
   };
 
+  // -------------------------------------------------------------------------
+  // Envoi
+  // -------------------------------------------------------------------------
+
+  const envoyer = async () => {
+    // Une seule demande à la fois ; après un succès, le verrou reste fermé.
+    if (envoiEnCours.current) return;
+    const v = await obtenirVerification();
+    if (!v) return;
+    const { etape: aCorriger, erreurs: trouvees } = v.erreursFormulaire(donnees, maintenant);
+    if (aCorriger !== null) {
+      setTentatives((t) => ({ ...t, [aCorriger]: trouvees }));
+      if (aCorriger !== etape) {
+        setEtape(aCorriger);
+        viser(ID_RESUME, true);
+      } else {
+        viser(ID_RESUME);
+      }
+      return;
+    }
+
+    envoiEnCours.current = true;
+    setEnvoi({ statut: "envoi" });
+    // Anti-spam : au moins 8 s entre l'ouverture du formulaire et l'envoi.
+    const attente = attenteAvantEnvoi(maintenant.getTime(), Date.now());
+    if (attente > 0) await new Promise((fin) => setTimeout(fin, attente));
+
+    const fichiers: Partial<Record<PhotoId, Blob>> = {};
+    for (const p of PHOTOS_DEMANDEES) {
+      const etat = photos[p.id];
+      if (etat.statut === "prete") fichiers[p.id] = etat.photo;
+    }
+    const corps = corpsEnvoi(
+      { ...donnees, source: lireSourceVisite() },
+      { piege: piege.current?.value ?? "", ouvertLe: maintenant.getTime(), envoyeLe: Date.now() },
+      fichiers,
+    );
+
+    let reponse;
+    try {
+      const r = await fetch(URL_API_RESERVATION, { method: "POST", body: corps });
+      reponse = lireReponse(await r.json().catch(() => null));
+    } catch {
+      reponse = { ok: false as const, message: MESSAGE_HORS_LIGNE };
+    }
+
+    if (!reponse.ok) {
+      envoiEnCours.current = false;
+      setEnvoi({ statut: "erreur", message: reponse.message, champs: reponse.champs });
+      viser(ID_ERREUR_ENVOI);
+      return;
+    }
+
+    retenirDemande({ reference: reponse.reference, demo: Boolean(reponse.demo), donnees, zone, photos: photosJointes });
+    setEnvoi({ statut: "envoyee" });
+    suivre("demande_envoyee");
+    router.push(`/reserver/merci?ref=${encodeURIComponent(reponse.reference)}`);
+  };
+
   const soumettre = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (etape < NOMBRE_ETAPES) void continuer();
-    else void verifier(etape);
+    else void envoyer();
   };
 
   // -------------------------------------------------------------------------
@@ -450,6 +517,12 @@ export function FormulaireReservation({ initial }: Props) {
           <p aria-live="polite" className="sr-only">
             {envoi.statut === "envoi" ? "Envoi de votre demande en cours." : ""}
           </p>
+
+          {/* Champ piège : invisible pour les humains et les lecteurs d'écran ; un robot le remplit. */}
+          <div aria-hidden="true" className="absolute -left-[9999px] top-auto h-px w-px overflow-hidden">
+            <label htmlFor={NOM_CHAMP_PIEGE}>Ne remplissez pas ce champ</label>
+            <input ref={piege} id={NOM_CHAMP_PIEGE} name={NOM_CHAMP_PIEGE} type="text" tabIndex={-1} autoComplete="off" defaultValue="" />
+          </div>
 
           <BarreActions resultat={resultat} cible={ID_ESTIMATION}>
             {etape > 1 && (
