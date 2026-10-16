@@ -16,6 +16,7 @@ import { EnTeteSection } from "@/components/sections/EnTetes";
 import { ListeFaq } from "@/components/sections/ListeFaq";
 import { HerosPareBrise } from "@/components/fx/HerosPareBrise";
 import { TitreEclat } from "@/components/fx/TitreEclat";
+import { FondLiquide } from "@/components/fx/FondLiquide";
 import Link from "next/link";
 
 const REASSURANCE = [
@@ -79,7 +80,8 @@ export default function Accueil() {
       <FormulesApercu />
       <OffreLancement />
 
-      <section className="theme-sombre relative z-10 pb-24 pt-12 md:pb-32" aria-labelledby="titre-estimation">
+      <section className="theme-sombre relative isolate z-10 pb-24 pt-12 md:pb-32" aria-labelledby="titre-estimation">
+        <FondLiquide />
         <div className="conteneur">
           <EnTeteSection
             id="titre-estimation"

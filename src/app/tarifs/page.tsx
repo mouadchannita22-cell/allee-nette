@@ -12,6 +12,7 @@ import { MentionPrix } from "@/components/sections/MentionPrix";
 import { AppelFinal } from "@/components/sections/Divers";
 import { Bouton } from "@/components/ui/Bouton";
 import { silhouettes } from "@/components/fx/voiture/silhouettes";
+import { FondLiquide } from "@/components/fx/FondLiquide";
 
 const [c1, c2] = zoneActive.communesPrincipales;
 
@@ -67,6 +68,7 @@ export default async function PageTarifs() {
           aria-hidden="true"
           className="absolute inset-0 -z-10 bg-[radial-gradient(40rem_30rem_at_80%_10%,rgb(46_230_214/0.12),transparent_65%),radial-gradient(45rem_35rem_at_0%_80%,rgb(15_42_74/0.95),transparent_70%)]"
         />
+        <FondLiquide />
         <div className="conteneur">
           <EnTeteSection
             id="titre-calculateur"

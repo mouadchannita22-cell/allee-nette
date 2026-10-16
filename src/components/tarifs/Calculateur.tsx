@@ -34,6 +34,7 @@ import { Bouton } from "@/components/ui/Bouton";
 import { ACompleter } from "@/components/ui/ACompleter";
 import { AideGabarit } from "./AideGabarit";
 import { ChampCommune, type EtatCommune } from "./ChampCommune";
+import { ChiffreRoulant } from "@/components/fx/ChiffreRoulant";
 
 type Props = {
   /** État de départ (formule mise en avant, ou estimation reçue par l'URL). */
@@ -146,7 +147,7 @@ export function Calculateur({ initial, compact = false }: Props) {
         >
           <span className="text-sm text-doux">Total estimé</span>
           <span className="font-titre text-2xl font-extrabold tabular-nums">
-            {resultat.statut === "estimation" ? euros(resultat.total) : "—"}
+            {resultat.statut === "estimation" ? <ChiffreRoulant montant={resultat.total} /> : "—"}
           </span>
           <span className="text-sm font-semibold text-accent">Détail ↓</span>
         </a>
@@ -414,7 +415,9 @@ function Recapitulatif({
 
       {resultat.statut === "estimation" && (
         <>
-          <p className="mt-3 font-titre text-6xl font-extrabold tabular-nums">{euros(resultat.total)}</p>
+          <p className="mt-3 font-titre text-6xl font-extrabold">
+            <ChiffreRoulant montant={resultat.total} />
+          </p>
           {resultat.aConfirmer && (
             <p className="mt-2 text-sm text-alerte">
               + {resultat.aConfirmer.min} à {resultat.aConfirmer.max} € à confirmer sur vos photos

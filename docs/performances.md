@@ -12,8 +12,11 @@ Page d'accueil :
 | + Héros « pare-brise » | 96 | 2,2 s | titre `h1` | 0 | 180 ms | 177 Ko | module 3D : 248 Ko, uniquement en mode complet |
 | + « Comment ça marche » épinglé (médiane de 3 mesures) | 96 | 2,6 s | titre `h1` | 0 | 114 ms | 183 Ko | — |
 | + Avant/après, goutte « sans rinçage », anneau 24 h | 98 | 2,2 s | titre `h1` | 0 | 110 ms | 189 Ko | — |
+| + Micro-interactions (médiane de 3) | 96 | 2,8 s | titre `h1` | 0 | 65 ms | 191 Ko | — |
 
-Sans bridage, le titre s'affiche dès la première image (175 ms) : le LCP simulé de 2,3 à 2,9 s vient de la simulation 4G, qui compte tout le JavaScript demandé avant ce premier affichage (React et Next, puis le calculateur de l'accueil). À traiter à la recette : alléger ce JavaScript initial pour passer nettement sous 2,5 s.
+Sans bridage, le titre s'affiche dès la première image (175 ms) : le LCP simulé de 2,3 à 2,9 s vient de la simulation 4G, qui compte tout ce qui est demandé avant ce premier affichage : HTML (37 Ko), polices (77 Ko), CSS (13,5 Ko) et JavaScript (174 Ko, dont 117 Ko pour React et Next). À traiter à la recette : alléger ce JavaScript initial et le HTML de l'accueil pour passer nettement sous 2,5 s.
+
+Essai écarté : ne plus précharger les polices fait chuter le score à 87 (décalage de mise en page de 0,16 au changement de police, premier affichage à 1,5 s).
 
 Page Tarifs :
 

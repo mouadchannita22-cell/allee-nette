@@ -34,18 +34,20 @@ type PropsBouton = Commun & Omit<ComponentProps<"button">, "className" | "childr
 export function Bouton(props: PropsLien | PropsBouton) {
   const { variante, taille, className, children, ...reste } = props;
   const classes = classesBouton(variante, taille, className);
+  // Les appels à l'action principaux attirent légèrement la souris (MicroInteractions).
+  const magnetique = (variante ?? "primaire") === "primaire" ? { "data-magnetique": "" } : {};
 
   if (reste.href !== undefined) {
     const { href, ...attributs } = reste as Omit<PropsLien, keyof Commun>;
     if (href.startsWith("/")) {
       return (
-        <Link href={href} className={classes} {...attributs}>
+        <Link href={href} className={classes} {...magnetique} {...attributs}>
           {children}
         </Link>
       );
     }
     return (
-      <a href={href} className={classes} {...attributs}>
+      <a href={href} className={classes} {...magnetique} {...attributs}>
         {children}
       </a>
     );
@@ -53,7 +55,7 @@ export function Bouton(props: PropsLien | PropsBouton) {
 
   const { type = "button", ...attributs } = reste as Omit<PropsBouton, keyof Commun>;
   return (
-    <button type={type} className={classes} {...attributs}>
+    <button type={type} className={classes} {...magnetique} {...attributs}>
       {children}
     </button>
   );

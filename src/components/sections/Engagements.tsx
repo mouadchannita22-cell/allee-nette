@@ -4,13 +4,15 @@ import { GARANTIE } from "@/data/offres";
 import { fr } from "@/lib/typo";
 import { AnneauGarantie } from "@/components/fx/AnneauGarantie";
 import { AuPassage } from "@/components/fx/AuPassage";
+import { BullesEcume } from "@/components/fx/BullesEcume";
 import { GoutteOnde } from "@/components/fx/GoutteOnde";
 import { EnTeteSection } from "./EnTetes";
 
 /** Garantie Retouche 24 h, autour d'un anneau de minuterie qui se remplit au passage. */
 export function Garantie() {
   return (
-    <section className="theme-sombre py-24 md:py-32" aria-labelledby="titre-garantie">
+    <section className="theme-sombre relative isolate overflow-hidden py-24 md:py-32" aria-labelledby="titre-garantie">
+      <BullesEcume />
       <div className="conteneur grid items-center gap-12 md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
         <AuPassage seuil={0.5}>
           <AnneauGarantie heures={CONDITIONS.retoucheHeures}>

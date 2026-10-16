@@ -7,6 +7,7 @@ import { ACompleter } from "@/components/ui/ACompleter";
 import { Bouton } from "@/components/ui/Bouton";
 import { IconeMail, IconeMessage, IconeTelephone } from "@/components/ui/Icones";
 import { Vague } from "./Vague";
+import { ReglageCurseur } from "@/components/fx/ReglageCurseur";
 
 const classeLien = "text-doux transition-colors hover:text-texte";
 
@@ -107,6 +108,9 @@ export function PiedDePage() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <ReglageCurseur />
+              </li>
             </ul>
           </div>
         </div>

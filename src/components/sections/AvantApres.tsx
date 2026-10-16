@@ -1,4 +1,5 @@
 import { REALISATIONS } from "@/data/realisations";
+import { BullesEcume } from "@/components/fx/BullesEcume";
 import { Comparateur } from "@/components/fx/Comparateur";
 import { EnTeteSection } from "./EnTetes";
 
@@ -9,7 +10,8 @@ import { EnTeteSection } from "./EnTetes";
  */
 export function AvantApres({ titre = "Avant, après." }: { titre?: string }) {
   return (
-    <section className="theme-sombre py-24 md:py-32" aria-labelledby="titre-avant-apres">
+    <section className="theme-sombre relative isolate overflow-hidden py-24 md:py-32" aria-labelledby="titre-avant-apres">
+      <BullesEcume />
       <div className="conteneur">
         <EnTeteSection
           id="titre-avant-apres"

@@ -22,6 +22,7 @@ export function FormulesApercu() {
             return (
               <li
                 key={f.id}
+                data-inclinaison
                 className={`flex flex-col rounded-carte border p-6 ${
                   principale ? "border-aqua/50 bg-aqua/[0.07] shadow-eclat" : "border-bord bg-texte/[0.03]"
                 }`}

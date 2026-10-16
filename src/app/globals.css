@@ -596,6 +596,189 @@ body:has(main > .theme-sombre:last-child) .vague-fond {
 }
 
 /* ==========================================================================
+   Micro-interactions
+   ========================================================================== */
+
+/* Transition entre pages : la nouvelle page monte comme une vague (template.tsx). */
+/* L'ancienne page reste en place sous la vague, puis s'efface : pas d'éclair de fond. */
+::view-transition-old(.vague-sortie) {
+  animation: 720ms ease-in both vague-sortie;
+}
+
+::view-transition-new(.vague-entree) {
+  animation: 720ms cubic-bezier(0.65, 0, 0.25, 1) both vague-entree;
+}
+
+@keyframes vague-sortie {
+  65% {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+}
+
+@keyframes vague-entree {
+  /* Le haut de la nouvelle page est en haut de l'écran : la vague, exprimée en
+     hauteur d'écran, balaie exactement la partie visible. */
+  from {
+    clip-path: polygon(0% calc(108vh + 0.00vh), 6.25% calc(108vh + 1.39vh), 12.5% calc(108vh + 2.31vh), 18.75% calc(108vh + 2.45vh), 25% calc(108vh + 1.77vh), 31.25% calc(108vh + 0.49vh), 37.5% calc(108vh - 0.96vh), 43.75% calc(108vh - 2.08vh), 50% calc(108vh - 2.50vh), 56.25% calc(108vh - 2.08vh), 62.5% calc(108vh - 0.96vh), 68.75% calc(108vh + 0.49vh), 75% calc(108vh + 1.77vh), 81.25% calc(108vh + 2.45vh), 87.5% calc(108vh + 2.31vh), 93.75% calc(108vh + 1.39vh), 100% calc(108vh + 0.00vh), 100% 100%, 0% 100%);
+  }
+  to {
+    clip-path: polygon(0% calc(-8vh + 0.00vh), 6.25% calc(-8vh + 1.39vh), 12.5% calc(-8vh + 2.31vh), 18.75% calc(-8vh + 2.45vh), 25% calc(-8vh + 1.77vh), 31.25% calc(-8vh + 0.49vh), 37.5% calc(-8vh - 0.96vh), 43.75% calc(-8vh - 2.08vh), 50% calc(-8vh - 2.50vh), 56.25% calc(-8vh - 2.08vh), 62.5% calc(-8vh - 0.96vh), 68.75% calc(-8vh + 0.49vh), 75% calc(-8vh + 1.77vh), 81.25% calc(-8vh + 2.45vh), 87.5% calc(-8vh + 2.31vh), 93.75% calc(-8vh + 1.39vh), 100% calc(-8vh + 0.00vh), 100% 100%, 0% 100%);
+  }
+}
+
+/* Boutons magnétiques : le décalage est posé par MicroInteractions (propriété translate). */
+[data-magnetique] {
+  transition:
+    translate 0.45s var(--ease-ressort),
+    transform 0.3s var(--ease-glisse),
+    box-shadow 0.3s var(--ease-glisse),
+    background-color 0.3s var(--ease-glisse),
+    border-color 0.3s var(--ease-glisse);
+}
+
+/* Cartes de prix inclinables, avec un reflet qui suit la souris. */
+[data-inclinaison] {
+  position: relative;
+  transform: perspective(1000px) rotateX(var(--incl-x, 0deg)) rotateY(var(--incl-y, 0deg));
+  transition: transform 0.5s var(--ease-glisse);
+}
+
+[data-inclinaison]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(circle at var(--reflet-x, 50%) var(--reflet-y, 50%), rgb(255 255 255 / 0.13), transparent 45%);
+  opacity: 0;
+  transition: opacity 0.3s var(--ease-glisse);
+}
+
+[data-inclinaison][data-survol]::after {
+  opacity: 1;
+}
+
+/* Curseur en bulle d'écume (souris uniquement). Le curseur normal reste visible. */
+.curseur-bulle {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 90;
+  width: 30px;
+  height: 30px;
+  margin: -15px 0 0 -15px;
+  border-radius: 50%;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 32% 30%, rgb(255 255 255 / 0.7), transparent 30%),
+    radial-gradient(circle, transparent 52%, rgb(46 230 214 / 0.3) 68%, transparent 72%);
+  box-shadow:
+    inset 0 0 0 1.5px rgb(14 124 116 / 0.55),
+    0 0 12px rgb(46 230 214 / 0.25);
+  opacity: 0;
+  transition:
+    opacity 0.3s,
+    scale 0.35s var(--ease-ressort);
+}
+
+.curseur-bulle[data-visible] {
+  opacity: 1;
+}
+
+.curseur-bulle[data-cliquable] {
+  scale: 1.8;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .reglage-curseur {
+    display: inline;
+  }
+}
+
+/* Bulles d'écume en parallaxe, pilotées par le défilement (sans JavaScript). */
+.bulle-ecume {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgb(255 255 255 / 0.5), rgb(46 230 214 / 0.12) 45%, transparent 70%);
+  box-shadow: inset 0 0 0 1px rgb(46 230 214 / 0.3);
+  opacity: 0.6;
+}
+
+@supports (animation-timeline: view()) {
+  .bulle-ecume {
+    animation: bulle-parallaxe linear both;
+    animation-timeline: view();
+  }
+}
+
+@keyframes bulle-parallaxe {
+  from {
+    transform: translateY(calc(var(--vitesse) * 70px));
+  }
+  to {
+    transform: translateY(calc(var(--vitesse) * -70px));
+  }
+}
+
+/* Fond « liquide » derrière le calculateur : nappes floues qui dérivent. */
+.fond-liquide .nappe {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  will-change: transform;
+  animation: nappe-derive 24s ease-in-out infinite alternate;
+}
+
+.fond-liquide .nappe-1 {
+  width: min(38rem, 90vw);
+  height: min(38rem, 90vw);
+  left: -8rem;
+  top: 15%;
+  background: #19c3b1;
+  opacity: 0.22;
+  animation-duration: 26s;
+}
+
+.fond-liquide .nappe-2 {
+  width: min(30rem, 70vw);
+  height: min(30rem, 70vw);
+  right: -6rem;
+  top: -4rem;
+  background: #2ee6d6;
+  opacity: 0.16;
+  animation-duration: 19s;
+  animation-delay: -6s;
+}
+
+.fond-liquide .nappe-3 {
+  width: min(34rem, 80vw);
+  height: min(34rem, 80vw);
+  left: 35%;
+  bottom: -12rem;
+  background: #0f2a4a;
+  opacity: 0.9;
+  animation-duration: 23s;
+  animation-delay: -11s;
+}
+
+@keyframes nappe-derive {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(6rem, -3rem) scale(1.15);
+  }
+  100% {
+    transform: translate(-4rem, 4rem) scale(0.92);
+  }
+}
+
+/* ==========================================================================
    Mouvement réduit : aucune animation, aucune transition, tout reste visible.
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
@@ -610,6 +793,10 @@ body:has(main > .theme-sombre:last-child) .vague-fond {
 
   .barre-progression {
     display: none;
+  }
+
+  .bulle-ecume {
+    animation: none !important;
   }
 
   ::view-transition-old(*),
