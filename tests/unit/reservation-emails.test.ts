@@ -149,6 +149,10 @@ describe("e-mail aux associés", () => {
       expect(contenu).toContain("Nous avons besoin d");
     }
     expect(texte).not.toMatch(/<[a-z]/i);
+    // Créneaux par ordre de préférence.
+    expect(texte).toContain("1. Mercredi 21 octobre, après-midi\n2. Samedi 24 octobre, matin");
+    expect(html).toMatch(/<ol [^>]*><li [^>]*>Mercredi 21 octobre/);
+    expect(texte).toContain("Déplacement en zone 1 : Inclus");
   });
 
   it("source de la visite : UTM, code et site d'origine", () => {

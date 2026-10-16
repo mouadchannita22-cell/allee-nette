@@ -97,7 +97,7 @@ type Bloc =
   | { type: "titre"; texte: string }
   | { type: "paragraphe"; texte: string; alerte?: boolean }
   | { type: "lignes"; lignes: readonly (readonly [string, string])[] }
-  | { type: "liste"; elements: readonly string[] }
+  | { type: "liste"; elements: readonly string[]; ordonnee?: boolean }
   | { type: "bouton"; texte: string; href: string };
 
 const COULEURS = {
@@ -126,8 +126,10 @@ function blocHtml(bloc: Bloc): string {
             `<tr><td style="padding:6px 12px 6px 0;border-bottom:1px solid ${COULEURS.filet};color:${COULEURS.ardoise};vertical-align:top;width:40%;">${e(libelle)}</td><td style="padding:6px 0;border-bottom:1px solid ${COULEURS.filet};vertical-align:top;">${e(valeur)}</td></tr>`,
         )
         .join("")}</table>`;
-    case "liste":
-      return `<ul style="margin:8px 0;padding-left:20px;">${bloc.elements.map((x) => `<li style="margin:4px 0;">${e(x)}</li>`).join("")}</ul>`;
+    case "liste": {
+      const balise = bloc.ordonnee ? "ol" : "ul";
+      return `<${balise} style="margin:8px 0;padding-left:20px;">${bloc.elements.map((x) => `<li style="margin:4px 0;">${e(x)}</li>`).join("")}</${balise}>`;
+    }
     case "bouton":
       return `<p style="margin:16px 0;"><a href="${e(bloc.href)}" style="display:inline-block;background:${COULEURS.lagon};color:#ffffff;text-decoration:none;font-weight:bold;padding:12px 20px;border-radius:999px;">${e(bloc.texte)}</a></p>`;
   }
@@ -142,7 +144,7 @@ function blocTexte(bloc: Bloc): string {
     case "lignes":
       return bloc.lignes.map(([libelle, valeur]) => `${libelle} : ${valeur}`).join("\n");
     case "liste":
-      return bloc.elements.map((x) => `- ${x}`).join("\n");
+      return bloc.elements.map((x, i) => `${bloc.ordonnee ? `${i + 1}.` : "-"} ${x}`).join("\n");
     case "bouton":
       return `${bloc.texte} : ${bloc.href}`;
   }
@@ -224,7 +226,11 @@ function blocsDevis(d: DemandePreparee): Bloc[] {
   if (r.statut !== "estimation") return [{ type: "titre", texte: "Estimation" }, { type: "paragraphe", texte: r.message }];
   const blocs: Bloc[] = [
     { type: "titre", texte: `Estimation : ${euros(r.total)}` },
-    { type: "lignes", lignes: r.lignes.map((l) => [l.libelle, montantLigne(l)] as const) },
+    {
+      type: "lignes",
+      // « Déplacement en zone 1 : inclus » : le montant dit déjà « Inclus ».
+      lignes: r.lignes.map((l) => [l.libelle.replace(/ : inclus$/, ""), montantLigne(l)] as const),
+    },
   ];
   if (r.aConfirmer) {
     blocs.push({
@@ -268,7 +274,7 @@ function blocsLieu(d: DemandePreparee): Bloc[] {
 function blocsCreneaux(d: DemandePreparee, titre: string): Bloc[] {
   return [
     { type: "titre", texte: titre },
-    { type: "liste", elements: d.demande.creneaux.map((id, i) => `${i + 1}. ${libelleCreneau(id)}`) },
+    { type: "liste", ordonnee: true, elements: d.demande.creneaux.map(libelleCreneau) },
   ];
 }
 
