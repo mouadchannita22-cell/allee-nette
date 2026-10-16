@@ -6,7 +6,9 @@ import { formule as trouverFormule, type FormuleId } from "@/data/offres";
 import {
   BOUTON_ENVOI,
   ETAPES_RESERVATION,
+  PHOTOS_DEMANDEES,
   type NumeroEtape,
+  type PhotoId,
 } from "@/data/reservation";
 import { suivre } from "@/lib/analytics";
 import { devinerGabarit } from "@/lib/gabarit";
@@ -25,15 +27,19 @@ import {
 import { trouverCommune } from "@/lib/zones";
 import type { EtatCommune } from "@/components/tarifs/ChampCommune";
 import { Bouton } from "@/components/ui/Bouton";
+import { compresserPhoto } from "./compression";
 import { EtapeCoordonnees } from "./EtapeCoordonnees";
 import { EtapeCreneaux } from "./EtapeCreneaux";
 import { EtapeFormule } from "./EtapeFormule";
 import { EtapeLieu } from "./EtapeLieu";
+import { EtapePhotosPaiement, PHOTOS_VIDES, type EtatPhoto, type PhotosFormulaire } from "./EtapePhotosPaiement";
+import { EtapeValidation } from "./EtapeValidation";
 import { EtapeVoiture, ID_AJOUTER_VOITURE } from "./EtapeVoiture";
 import { BarreActions, PanneauEstimation } from "./Estimation";
 import { LiensContact } from "./LiensContact";
 import { PastilleErreur } from "./Champs";
 import { Progression } from "./Progression";
+import { Recapitulatif } from "./Recapitulatif";
 import { ResumeErreurs } from "./ResumeErreurs";
 
 type Props = {
@@ -92,6 +98,7 @@ export function FormulaireReservation({ initial }: Props) {
   const [etapeMax, setEtapeMax] = useState<NumeroEtape>(1);
   const [tentatives, setTentatives] = useState<Partial<Record<NumeroEtape, ErreursChamps>>>({});
   const [focus, setFocus] = useState<DemandeFocus | null>(null);
+  const [photos, setPhotos] = useState<PhotosFormulaire>(PHOTOS_VIDES);
   const [envoi, setEnvoi] = useState<EtatEnvoi>({ statut: "repos" });
   const [entame, setEntame] = useState(false);
   // Heure d'ouverture du formulaire : créneaux proposés et délai minimal de l'anti-spam.
@@ -99,6 +106,10 @@ export function FormulaireReservation({ initial }: Props) {
   const [verification, setVerification] = useState<Verification | null>(null);
 
   const etapesVues = useRef(new Set<number>());
+  // Dernière compression demandée par photo : une compression plus ancienne qui finit après est ignorée.
+  const compressions = useRef<Partial<Record<PhotoId, number>>>({});
+  // Aperçus affichés (adresses blob:), libérés quand la photo change ou quand le formulaire disparaît.
+  const apercus = useRef<Partial<Record<PhotoId, string>>>({});
 
   const zone = commune.commune?.zone ?? (commune.inconnue ? "hors-zone" : "zone1");
   const entree = { voitures: donnees.voitures, commune: donnees.lieu.commune, code: donnees.coordonnees.code };
@@ -112,10 +123,11 @@ export function FormulaireReservation({ initial }: Props) {
     [verification, etape, donnees, maintenant],
   );
   const erreurs = erreursRestantes(tentatives[etape], actuelles);
+  const photosJointes = PHOTOS_DEMANDEES.filter((p) => photos[p.id].statut === "prete").map((p) => p.libelle);
   const exterieur = donnees.voitures.some((v) => trouverFormule(v.formule).avecExterieur || Boolean(v.options["exterieur-seul"]));
 
   // -------------------------------------------------------------------------
-  // Effets : mesure, focus, avertissement avant de quitter
+  // Effets : mesure, focus, avertissement avant de quitter, aperçus
   // -------------------------------------------------------------------------
 
   useEffect(() => {
@@ -182,6 +194,11 @@ export function FormulaireReservation({ initial }: Props) {
     return () => window.removeEventListener("beforeunload", avertir);
   }, [proteger]);
 
+  useEffect(() => {
+    const parPhoto = apercus.current;
+    return () => Object.values(parPhoto).forEach((url) => URL.revokeObjectURL(url));
+  }, []);
+
   // -------------------------------------------------------------------------
   // Modifications
   // -------------------------------------------------------------------------
@@ -212,6 +229,33 @@ export function FormulaireReservation({ initial }: Props) {
 
   /** Zone 2 avec L'Intérieur Net seul : la première voiture passe à la formule proposée. */
   const basculer = (f: FormuleId) => modifierVoiture(0, (v) => changerFormule(v, f));
+
+  /** Remplace l'état d'une photo et libère l'aperçu précédent. */
+  const remplacerPhoto = (id: PhotoId, etat: EtatPhoto) => {
+    const ancien = apercus.current[id];
+    if (ancien && (etat.statut !== "prete" || etat.apercu !== ancien)) {
+      delete apercus.current[id];
+      // Libéré après le rendu qui retire l'image de la page.
+      setTimeout(() => URL.revokeObjectURL(ancien), 0);
+    }
+    if (etat.statut === "prete") apercus.current[id] = etat.apercu;
+    setPhotos((actuelles) => ({ ...actuelles, [id]: etat }));
+  };
+
+  const choisirPhoto = async (id: PhotoId, fichier: File) => {
+    setEntame(true);
+    const jeton = (compressions.current[id] ?? 0) + 1;
+    compressions.current[id] = jeton;
+    remplacerPhoto(id, { statut: "compression" });
+    const r = await compresserPhoto(fichier);
+    if (compressions.current[id] !== jeton) return;
+    remplacerPhoto(id, r.ok ? { statut: "prete", photo: r.photo, apercu: URL.createObjectURL(r.photo) } : { statut: "erreur", message: r.message });
+  };
+
+  const retirerPhoto = (id: PhotoId) => {
+    compressions.current[id] = (compressions.current[id] ?? 0) + 1;
+    remplacerPhoto(id, { statut: "vide" });
+  };
 
   // -------------------------------------------------------------------------
   // Navigation entre les étapes
@@ -348,6 +392,26 @@ export function FormulaireReservation({ initial }: Props) {
                 effetCode={effetDuCode(entree, zone)}
                 erreurs={erreurs}
                 onModifier={(maj) => modifier((d) => ({ ...d, coordonnees: { ...d.coordonnees, ...maj } }))}
+              />
+            )}
+            {etape === 6 && (
+              <EtapePhotosPaiement
+                photos={photos}
+                paiement={donnees.paiement}
+                erreurs={erreurs}
+                onChoisirPhoto={(id, fichier) => void choisirPhoto(id, fichier)}
+                onRetirerPhoto={retirerPhoto}
+                onPaiement={(paiement) => modifier((d) => ({ ...d, paiement }))}
+              />
+            )}
+            {etape === 7 && (
+              <EtapeValidation
+                validation={donnees.validation}
+                erreurs={erreurs}
+                onCocher={(cle, coche) => modifier((d) => ({ ...d, validation: { ...d.validation, [cle]: coche } }))}
+                recapitulatif={
+                  <Recapitulatif donnees={donnees} zone={zone} resultat={resultat} photos={photosJointes} onModifier={aller} />
+                }
               />
             )}
           </div>
