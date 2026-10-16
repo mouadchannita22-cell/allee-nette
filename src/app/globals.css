@@ -298,6 +298,24 @@ body:has(main > .theme-sombre:last-child) .vague-fond {
 }
 
 /* ==========================================================================
+   Avant/après : emplacements « Photo à venir », sale à gauche, propre à droite
+   ========================================================================== */
+.volet-avant {
+  background:
+    radial-gradient(circle at 22% 28%, rgb(150 128 98 / 0.4), transparent 42%),
+    radial-gradient(circle at 78% 72%, rgb(110 96 78 / 0.45), transparent 48%),
+    radial-gradient(circle at 60% 20%, rgb(80 72 62 / 0.35), transparent 35%),
+    repeating-radial-gradient(circle at 40% 60%, rgb(255 255 255 / 0.025) 0 1px, transparent 1px 7px),
+    #1c2028;
+}
+
+.volet-apres {
+  background:
+    radial-gradient(circle at 70% 30%, rgb(46 230 214 / 0.3), transparent 55%),
+    linear-gradient(160deg, #0f2a4a, #0b1220);
+}
+
+/* ==========================================================================
    Mouvement réduit : aucune animation, aucune transition, tout reste visible.
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {

@@ -1,9 +1,11 @@
+import { REALISATIONS } from "@/data/realisations";
+import { Comparateur } from "@/components/fx/Comparateur";
 import { EnTeteSection } from "./EnTetes";
 
 /**
- * Avant/après. Uniquement nos propres photos, avec l'accord écrit du client
- * et les plaques floutées. En attendant : des emplacements clairement marqués.
- * Le curseur « glisser pour nettoyer » arrive à l'étape des effets.
+ * Avant/après « glisser pour nettoyer ». Uniquement nos propres photos, avec
+ * l'accord écrit du client et les plaques floutées (data/realisations.ts).
+ * En attendant : des emplacements clairement marqués « Photo à venir ».
  */
 export function AvantApres({ titre = "Avant, après." }: { titre?: string }) {
   return (
@@ -13,15 +15,12 @@ export function AvantApres({ titre = "Avant, après." }: { titre?: string }) {
           id="titre-avant-apres"
           surtitre="Nos réalisations"
           titre={titre}
-          intro="Ici, uniquement nos propres photos, publiées avec l'accord du client et les plaques floutées. Les premières arrivent avec nos premiers clients."
+          intro="Ici, uniquement nos propres photos, publiées avec l'accord du client et les plaques floutées. Les premières arrivent avec nos premiers clients. Faites glisser la raclette pour comparer."
         />
         <ul className="mt-12 grid gap-5 md:grid-cols-3">
-          {["Habitacle avant", "Sièges arrière", "Carrosserie"].map((libelle) => (
-            <li key={libelle}>
-              <div className="flex aspect-[4/3] flex-col items-center justify-center rounded-carte border-2 border-dashed border-bord bg-texte/[0.03] text-center">
-                <span className="font-titre text-lg font-bold">Photo à venir</span>
-                <span className="mt-1 text-sm text-doux">{libelle}, avant / après</span>
-              </div>
+          {REALISATIONS.map((r) => (
+            <li key={r.id}>
+              <Comparateur libelle={r.libelle} avant={r.avant} apres={r.apres} />
             </li>
           ))}
         </ul>
