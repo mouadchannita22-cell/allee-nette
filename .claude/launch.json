@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "allee-nette-prod",
+      "runtimeExecutable": "C:\\Users\\mouad.channita\\outils\\node-v24.22.0-win-x64\\node.exe",
+      "runtimeArgs": ["node_modules/next/dist/bin/next", "start", "-p", "3000"],
+      "port": 3000
+    },
+    {
+      "name": "allee-nette-dev",
+      "runtimeExecutable": "C:\\Users\\mouad.channita\\outils\\node-v24.22.0-win-x64\\node.exe",
+      "runtimeArgs": ["node_modules/next/dist/bin/next", "dev", "-p", "3001"],
+      "port": 3001
+    }
+  ]
+}

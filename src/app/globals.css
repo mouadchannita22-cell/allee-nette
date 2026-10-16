@@ -1,0 +1,247 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Tokens de design — palette « l'éclat de l'eau sur une carrosserie, la nuit »
+   Contrastes vérifiés (WCAG AA) :
+   - ardoise sur écume 5,2:1 ; brume sur nuit 7,7:1 ; aqua sur nuit 12:1 ;
+   - lagon sur écume 4,8:1 (accent lisible sur fond clair) ;
+   - nuit sur aqua 12:1 (boutons principaux).
+   ========================================================================== */
+@theme {
+  --color-nuit: #0b1220;
+  --color-profond: #0f2a4a;
+  --color-aqua: #2ee6d6;
+  --color-turquoise: #19c3b1;
+  --color-lagon: #0e7c74;
+  --color-ecume: #f3fafc;
+  --color-blanc: #ffffff;
+  --color-ardoise: #5b6b7f;
+  --color-brume: #9aa8ba;
+  --color-alerte: #ffb547;
+  --color-ambre: #8a5300;
+
+  --ease-glisse: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-ressort: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --radius-carte: 1.75rem;
+
+  --shadow-eclat: 0 0 0 1px rgb(46 230 214 / 0.28), 0 18px 48px -18px rgb(46 230 214 / 0.55);
+  --shadow-douce: 0 1px 2px rgb(11 18 32 / 0.06), 0 12px 32px -12px rgb(11 18 32 / 0.18);
+}
+
+/* Couleurs sémantiques : elles s'adaptent selon que la section est claire ou sombre. */
+@theme inline {
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-titre: var(--font-unbounded), ui-sans-serif, system-ui, sans-serif;
+
+  --color-fond: var(--fond);
+  --color-texte: var(--texte);
+  --color-doux: var(--texte-doux);
+  --color-accent: var(--accent);
+  --color-bord: var(--bord);
+}
+
+:root {
+  --fond: var(--color-ecume);
+  --texte: var(--color-nuit);
+  --texte-doux: var(--color-ardoise);
+  --accent: var(--color-lagon);
+  --bord: rgb(11 18 32 / 0.12);
+  --focus: var(--color-lagon);
+  --hauteur-barre-mobile: 4.5rem;
+}
+
+/* Dans la couche « components » : une classe utilitaire (bg-…, verre) peut les surcharger. */
+@layer components {
+  .theme-sombre {
+    --fond: var(--color-nuit);
+    --texte: var(--color-ecume);
+    --texte-doux: var(--color-brume);
+    --accent: var(--color-aqua);
+    --bord: rgb(243 250 252 / 0.12);
+    --focus: var(--color-aqua);
+    background-color: var(--fond);
+    color: var(--texte);
+  }
+
+  .theme-clair {
+    --fond: var(--color-ecume);
+    --texte: var(--color-nuit);
+    --texte-doux: var(--color-ardoise);
+    --accent: var(--color-lagon);
+    --bord: rgb(11 18 32 / 0.12);
+    --focus: var(--color-lagon);
+    background-color: var(--fond);
+    color: var(--texte);
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 6rem;
+    background-color: var(--color-nuit);
+  }
+
+  body {
+    background-color: var(--color-ecume);
+    color: var(--color-nuit);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-titre);
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+    border-radius: 0.375rem;
+  }
+
+  ::selection {
+    background-color: var(--color-aqua);
+    color: var(--color-nuit);
+  }
+}
+
+@utility conteneur {
+  width: 100%;
+  max-width: 76rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+
+  @media (width >= 40rem) {
+    padding-inline: 1.5rem;
+  }
+}
+
+/* Verre dépoli : navigation, barre mobile, panneaux. */
+@utility verre {
+  background-color: rgb(11 18 32 / 0.62);
+  border: 1px solid rgb(243 250 252 / 0.1);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  backdrop-filter: blur(18px) saturate(1.4);
+}
+
+/* Reflet qui glisse sur un bouton au survol ou au focus clavier. */
+@utility reflet {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(105deg, transparent 30%, rgb(255 255 255 / 0.5) 48%, transparent 66%);
+    transform: translateX(-130%);
+    transition: transform 0.8s var(--ease-glisse);
+  }
+
+  &:hover::after,
+  &:focus-visible::after {
+    transform: translateX(130%);
+  }
+}
+
+/* Emplacement d'une information à compléter : volontairement visible. */
+@utility a-completer {
+  border-radius: 0.375rem;
+  background-color: rgb(255 181 71 / 0.16);
+  outline: 1px dashed var(--color-alerte);
+  padding-inline: 0.35em;
+  font-style: normal;
+}
+
+/* ==========================================================================
+   Animations pilotées par le défilement (sans JavaScript).
+   Sans prise en charge du navigateur, rien ne s'anime et tout reste lisible.
+   ========================================================================== */
+@keyframes progression-lecture {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes nav-reduite {
+  to {
+    padding-block: 0.375rem;
+    background-color: rgb(11 18 32 / 0.82);
+    box-shadow: 0 12px 32px -16px rgb(0 0 0 / 0.6);
+  }
+}
+
+.barre-progression {
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+@supports (animation-timeline: scroll()) {
+  .barre-progression {
+    animation: progression-lecture linear both;
+    animation-timeline: scroll(root block);
+  }
+
+  .nav-pilule {
+    animation: nav-reduite linear both;
+    animation-timeline: scroll(root block);
+    animation-range: 0 160px;
+  }
+}
+
+@supports not (animation-timeline: scroll()) {
+  .barre-progression {
+    display: none;
+  }
+}
+
+/* Vague animée du pied de page. */
+@keyframes vague {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.vague-anim {
+  animation: vague 18s linear infinite;
+}
+
+.vague-anim-lente {
+  animation: vague 28s linear infinite reverse;
+}
+
+/* ==========================================================================
+   Mouvement réduit : aucune animation, aucune transition, tout reste visible.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .barre-progression {
+    display: none;
+  }
+
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
