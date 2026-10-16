@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { site } from "@/config/site";
-import type { FormuleId } from "@/data/offres";
+import { formule as trouverFormule, type FormuleId } from "@/data/offres";
 import {
   BOUTON_ENVOI,
   ETAPES_RESERVATION,
@@ -12,6 +12,7 @@ import { suivre } from "@/lib/analytics";
 import { devinerGabarit } from "@/lib/gabarit";
 import { basculerOption } from "@/lib/prix";
 import { etapeDuChamp, idChamp } from "@/lib/reservation/champs";
+import { creneauxDisponibles } from "@/lib/reservation/creneaux";
 import { devisReservation } from "@/lib/reservation/devis";
 import type { DonneesFormulaire, ErreursChamps } from "@/lib/reservation/formulaire";
 import {
@@ -24,7 +25,9 @@ import {
 import { trouverCommune } from "@/lib/zones";
 import type { EtatCommune } from "@/components/tarifs/ChampCommune";
 import { Bouton } from "@/components/ui/Bouton";
+import { EtapeCreneaux } from "./EtapeCreneaux";
 import { EtapeFormule } from "./EtapeFormule";
+import { EtapeLieu } from "./EtapeLieu";
 import { EtapeVoiture, ID_AJOUTER_VOITURE } from "./EtapeVoiture";
 import { BarreActions, PanneauEstimation } from "./Estimation";
 import { LiensContact } from "./LiensContact";
@@ -83,7 +86,7 @@ function erreursRestantes(tentative: ErreursChamps | undefined, actuelles: Erreu
  */
 export function FormulaireReservation({ initial }: Props) {
   const [donnees, setDonnees] = useState(initial);
-  const [commune] = useState(() => etatCommune(initial.lieu.commune));
+  const [commune, setCommune] = useState(() => etatCommune(initial.lieu.commune));
   const [etape, setEtape] = useState<NumeroEtape>(1);
   const [etapeMax, setEtapeMax] = useState<NumeroEtape>(1);
   const [tentatives, setTentatives] = useState<Partial<Record<NumeroEtape, ErreursChamps>>>({});
@@ -101,11 +104,13 @@ export function FormulaireReservation({ initial }: Props) {
     () => devisReservation({ voitures: donnees.voitures, commune: donnees.lieu.commune, code: donnees.coordonnees.code }, zone),
     [donnees.voitures, donnees.lieu.commune, donnees.coordonnees.code, zone],
   );
+  const disponibles = useMemo(() => creneauxDisponibles(maintenant), [maintenant]);
   const actuelles = useMemo(
     () => (verification ? verification.erreursEtape(etape, donnees, maintenant) : {}),
     [verification, etape, donnees, maintenant],
   );
   const erreurs = erreursRestantes(tentatives[etape], actuelles);
+  const exterieur = donnees.voitures.some((v) => trouverFormule(v.formule).avecExterieur || Boolean(v.options["exterieur-seul"]));
 
   // -------------------------------------------------------------------------
   // Effets : mesure, focus, avertissement avant de quitter
@@ -197,6 +202,11 @@ export function FormulaireReservation({ initial }: Props) {
       const apres = devinerGabarit(modele);
       return { ...v, modele, gabarit: apres && apres.modele !== avant?.modele ? apres.gabarit : v.gabarit };
     });
+
+  const changerCommune = (etat: EtatCommune) => {
+    setCommune(etat);
+    modifier((d) => ({ ...d, lieu: { ...d.lieu, commune: etat.commune?.nom ?? etat.saisie } }));
+  };
 
   /** Zone 2 avec L'Intérieur Net seul : la première voiture passe à la formule proposée. */
   const basculer = (f: FormuleId) => modifierVoiture(0, (v) => changerFormule(v, f));
@@ -303,6 +313,31 @@ export function FormulaireReservation({ initial }: Props) {
                 onFormule={(i, f) => modifierVoiture(i, (v) => changerFormule(v, f))}
                 onAbonnement={(i, abonnement) => modifierVoiture(i, (v) => ({ ...v, abonnement }))}
                 onOption={(i, option, q) => modifierVoiture(i, (v) => modifierOptions(v, basculerOption(v.options, option, q)))}
+              />
+            )}
+            {etape === 3 && (
+              <EtapeLieu
+                lieu={donnees.lieu}
+                commune={commune}
+                zone={zone}
+                resultat={resultat}
+                exterieur={exterieur}
+                erreurs={erreurs}
+                onAdresse={(adresse) => modifier((d) => ({ ...d, lieu: { ...d.lieu, adresse } }))}
+                onCommune={changerCommune}
+                onEmplacement={(emplacement) => modifier((d) => ({ ...d, lieu: { ...d.lieu, emplacement } }))}
+                onPrise={(prise) => modifier((d) => ({ ...d, lieu: { ...d.lieu, prise } }))}
+                onBasculer={basculer}
+              />
+            )}
+            {etape === 4 && (
+              <EtapeCreneaux
+                disponibles={disponibles}
+                choisis={donnees.creneaux}
+                erreurs={erreurs}
+                onChoisir={(rang, creneau) =>
+                  modifier((d) => ({ ...d, creneaux: d.creneaux.map((c, k) => (k === rang ? creneau : c)) }))
+                }
               />
             )}
           </div>
