@@ -29,7 +29,7 @@ Versions exactes, publiées depuis au moins 7 jours au moment de l'installation.
 | motion | 14.0.0 | MIT |
 | gsap, @gsap/react | 3.15.0 / 2.1.2 | Licence GSAP gratuite (usage commercial autorisé) |
 | lenis | 1.3.26 | MIT |
-| three, @react-three/fiber, @react-three/drei | 0.186.1 / 9.8.1 / 10.7.9 | MIT |
+| three, @react-three/fiber | 0.186.1 / 9.8.1 | MIT |
 | zod | 4.6.5 | MIT |
 | resend | 6.32.1 | MIT |
 | stripe | 23.0.0 | MIT |
@@ -41,6 +41,8 @@ Versions exactes, publiées depuis au moins 7 jours au moment de l'installation.
 | @axe-core/playwright | 4.13.0 | MPL-2.0 (outil de test, jamais livré) |
 | @lhci/cli | 0.15.1 | Apache-2.0 |
 | opentype.js | 2.0.0 | MIT (génération du logo) |
+
+@react-three/drei, prévu au départ, a été retiré à l'étape 5 : son composant d'éclairage embarquait des chargeurs d'images HDR inutiles (24 Ko), remplacés par un petit studio de bandes lumineuses écrit pour le projet.
 
 TypeScript 7 (compilateur natif) n'est pas retenu : typescript-eslint exige une version inférieure à 6.1.
 
