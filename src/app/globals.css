@@ -39,6 +39,8 @@
   --color-doux: var(--texte-doux);
   --color-accent: var(--accent);
   --color-bord: var(--bord);
+  --color-bord-champ: var(--bord-champ);
+  --color-avertissement: var(--avertissement);
 }
 
 :root {
@@ -47,6 +49,10 @@
   --texte-doux: var(--color-ardoise);
   --accent: var(--color-lagon);
   --bord: rgb(11 18 32 / 0.12);
+  /* Bord des champs et des cartes à choisir : 3:1 au moins sur fond clair (WCAG 1.4.11). */
+  --bord-champ: rgb(11 18 32 / 0.5);
+  /* Texte d'avertissement : ambre sur fond clair, alerte sur fond sombre. */
+  --avertissement: var(--color-ambre);
   --focus: var(--color-lagon);
   --hauteur-barre-mobile: 4.5rem;
 }
@@ -59,6 +65,8 @@
     --texte-doux: var(--color-brume);
     --accent: var(--color-aqua);
     --bord: rgb(243 250 252 / 0.12);
+    --bord-champ: var(--bord);
+    --avertissement: var(--color-alerte);
     --focus: var(--color-aqua);
     background-color: var(--fond);
     color: var(--texte);
@@ -70,6 +78,8 @@
     --texte-doux: var(--color-ardoise);
     --accent: var(--color-lagon);
     --bord: rgb(11 18 32 / 0.12);
+    --bord-champ: rgb(11 18 32 / 0.5);
+    --avertissement: var(--color-ambre);
     --focus: var(--color-lagon);
     background-color: var(--fond);
     color: var(--texte);

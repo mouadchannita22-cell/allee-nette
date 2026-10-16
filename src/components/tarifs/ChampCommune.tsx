@@ -13,11 +13,19 @@ type Props = {
   onChange: (etat: EtatCommune) => void;
   /** Libellé visible du champ. */
   libelle?: string;
+  /** Identifiant du champ (cible des liens d'un résumé d'erreurs). */
+  id?: string;
+  /** Champ obligatoire d'un formulaire. */
+  requis?: boolean;
+  /** Message d'erreur affiché sous le champ et relié à lui. */
+  erreur?: string;
 };
 
 /** Champ « Votre commune » avec autocomplétion (motif ARIA combobox). */
-export function ChampCommune({ valeur, onChange, libelle = "Votre commune" }: Props) {
-  const id = useId();
+export function ChampCommune({ valeur, onChange, libelle = "Votre commune", id: idChamp, requis = false, erreur }: Props) {
+  const idAuto = useId();
+  const id = idChamp ?? idAuto;
+  const idErreur = `${id}-erreur`;
   const idListe = `${id}-liste`;
   const idAide = `${id}-aide`;
   const [ouvert, setOuvert] = useState(false);
@@ -45,7 +53,10 @@ export function ChampCommune({ valeur, onChange, libelle = "Votre commune" }: Pr
         aria-expanded={listeVisible}
         aria-controls={idListe}
         aria-activedescendant={listeVisible && actif >= 0 ? `${idListe}-${actif}` : undefined}
-        aria-describedby={idAide}
+        aria-describedby={erreur ? `${idErreur} ${idAide}` : idAide}
+        aria-invalid={erreur ? true : undefined}
+        aria-required={requis || undefined}
+        maxLength={80}
         placeholder={`Par exemple : ${zoneActive.communesPrincipales[1]}`}
         value={valeur.saisie}
         onChange={(e) => {
@@ -74,8 +85,13 @@ export function ChampCommune({ valeur, onChange, libelle = "Votre commune" }: Pr
             setOuvert(false);
           }
         }}
-        className="h-12 w-full rounded-xl border border-bord bg-texte/[0.04] px-4 text-base text-texte placeholder:text-doux/70"
+        className="h-12 w-full rounded-xl border border-bord-champ bg-texte/[0.04] px-4 text-base text-texte placeholder:text-doux/70 aria-invalid:border-2 aria-invalid:border-avertissement"
       />
+      {erreur && (
+        <p id={idErreur} className="mt-2 text-sm font-semibold text-avertissement">
+          {erreur}
+        </p>
+      )}
       <ul
         id={idListe}
         role="listbox"
@@ -94,7 +110,7 @@ export function ChampCommune({ valeur, onChange, libelle = "Votre commune" }: Pr
             className="flex cursor-pointer items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-sm text-texte aria-selected:bg-texte/10 hover:bg-texte/8"
           >
             <span>
-              {c.nom} <span className="text-doux">{c.cp}</span>
+              {c.nom} <span className="text-texte/75">{c.cp}</span>
             </span>
             <BadgeZone zone={c.zone} />
           </li>
@@ -114,11 +130,12 @@ function messageZone({ saisie, commune, inconnue }: EtatCommune): string {
   return `Déplacement inclus jusqu'à ${zoneActive.rayons.zone1} km de ${zoneActive.ville}, +${DEPLACEMENT.zone2.supplement} € jusqu'à ${zoneActive.rayons.zone2} km.`;
 }
 
+/** Pastille « Zone 1 », « Zone 2 » ou « Hors zone ». Sur fond clair, couleurs foncées pour rester lisibles. */
 export function BadgeZone({ zone }: { zone: "zone1" | "zone2" | "hors-zone" }) {
   const styles = {
     zone1: "bg-aqua text-nuit",
-    zone2: "bg-aqua/25 text-aqua",
-    "hors-zone": "bg-alerte/20 text-alerte",
+    zone2: "bg-aqua/25 text-aqua in-[.theme-clair]:bg-transparent in-[.theme-clair]:text-texte in-[.theme-clair]:ring-1 in-[.theme-clair]:ring-lagon",
+    "hors-zone": "bg-alerte/20 text-alerte in-[.theme-clair]:text-ambre",
   } as const;
   const libelles = { zone1: "Zone 1", zone2: "Zone 2", "hors-zone": "Hors zone" } as const;
   return (

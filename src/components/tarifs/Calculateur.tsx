@@ -1,19 +1,8 @@
 "use client";
 
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useId, useMemo, useRef, useState } from "react";
 import { site } from "@/config/site";
-import {
-  FORMULES,
-  GABARITS,
-  OFFRES,
-  OPTIONS,
-  abonnementPour,
-  duree,
-  formule as trouverFormule,
-  type FormuleId,
-  type Gabarit,
-  type OptionTarif,
-} from "@/data/offres";
+import { OFFRES, formule as trouverFormule, type FormuleId } from "@/data/offres";
 import { suivre } from "@/lib/analytics";
 import { lienWhatsApp } from "@/lib/contact";
 import { versParametres, type EtatCalculateur } from "@/lib/devis-url";
@@ -21,19 +10,17 @@ import {
   MENTION_ESTIMATION,
   basculerOption,
   calculerDevis,
-  disponibilite,
   nettoyerOptions,
-  prixFormule,
-  type LigneDevis,
   type ResultatDevis,
   type Vehicule,
 } from "@/lib/prix";
-import { euros } from "@/lib/texte";
 import { trouverCommune } from "@/lib/zones";
 import { Bouton } from "@/components/ui/Bouton";
 import { ACompleter } from "@/components/ui/ACompleter";
 import { AideGabarit } from "./AideGabarit";
+import { LignesDevis, RemarquesDevis, useAnnonce } from "./AffichageDevis";
 import { ChampCommune, type EtatCommune } from "./ChampCommune";
+import { CaseAbonnement, ChoixFormule, ChoixGabarit, ListeOptions } from "./ChoixVehicule";
 import { ChiffreRoulant } from "@/components/fx/ChiffreRoulant";
 
 type Props = {
@@ -188,8 +175,6 @@ function BlocVehicule({
   onRetirer: () => void;
 }) {
   const nom = `${useId()}-v${index}`;
-  const abonnement = abonnementPour(vehicule.formule);
-  const formule = trouverFormule(vehicule.formule);
 
   return (
     <fieldset className="rounded-carte border border-bord bg-texte/[0.03] p-5 sm:p-6">
@@ -205,180 +190,49 @@ function BlocVehicule({
         </div>
       )}
 
-      <fieldset>
-        <legend className="mb-3 text-sm font-semibold">Formule</legend>
-        <div className="grid gap-3 sm:grid-cols-2">
-          {FORMULES.map((f) => (
-            <label
-              key={f.id}
-              htmlFor={`${nom}-formule-${f.id}`}
-              className="relative flex cursor-pointer flex-col rounded-2xl border border-bord p-4 transition-colors hover:border-accent/60 has-checked:border-aqua has-checked:bg-aqua/10 has-focus-visible:outline-3 has-focus-visible:outline-offset-2 has-focus-visible:outline-[var(--focus)]"
-            >
-              <input
-                id={`${nom}-formule-${f.id}`}
-                type="radio"
-                name={`${nom}-formule`}
-                value={f.id}
-                checked={vehicule.formule === f.id}
-                onChange={() => onChange((v) => ({ ...v, formule: f.id, options: nettoyerOptions(f.id, v.options ?? {}) }))}
-                className="sr-only"
-              />
-              <span className="flex items-baseline justify-between gap-3">
-                <span className="font-semibold">{f.nom}</span>
-                <span className="font-titre text-lg font-bold tabular-nums">{euros(f.prix[vehicule.gabarit])}</span>
-              </span>
-              <span className="mt-1 text-sm text-doux">
-                {f.positionnement} · {duree(f)}
-              </span>
-            </label>
-          ))}
-        </div>
-      </fieldset>
+      <ChoixFormule
+        nom={nom}
+        formule={vehicule.formule}
+        gabarit={vehicule.gabarit}
+        onChoisir={(f) => onChange((v) => ({ ...v, formule: f, options: nettoyerOptions(f, v.options ?? {}) }))}
+      />
 
-      <fieldset className="mt-6">
-        <legend className="mb-3 text-sm font-semibold">Gabarit</legend>
-        <div className="grid grid-cols-3 gap-2">
-          {GABARITS.map((g) => (
-            <label
-              key={g.code}
-              htmlFor={`${nom}-gabarit-${g.code}`}
-              title={g.libelle}
-              className="flex cursor-pointer flex-col items-center rounded-2xl border border-bord px-2 py-3 text-center transition-colors hover:border-accent/60 has-checked:border-aqua has-checked:bg-aqua/10 has-focus-visible:outline-3 has-focus-visible:outline-offset-2 has-focus-visible:outline-[var(--focus)]"
-            >
-              <input
-                id={`${nom}-gabarit-${g.code}`}
-                type="radio"
-                name={`${nom}-gabarit`}
-                value={g.code}
-                checked={vehicule.gabarit === g.code}
-                onChange={() => onChange((v) => ({ ...v, gabarit: g.code as Gabarit }))}
-                className="sr-only"
-              />
-              <span className="font-titre text-xl font-bold">{g.code}</span>
-              <span className="mt-0.5 text-xs text-doux">{g.libelleCourt}</span>
-            </label>
-          ))}
-        </div>
-        <p className="mt-2 text-xs text-doux">
-          {GABARITS.find((g) => g.code === vehicule.gabarit)?.libelle}
-          {GABARITS.find((g) => g.code === vehicule.gabarit)?.exemples
-            ? ` : ${GABARITS.find((g) => g.code === vehicule.gabarit)?.exemples}`
-            : ""}
-        </p>
+      <ChoixGabarit
+        className="mt-6"
+        nom={nom}
+        gabarit={vehicule.gabarit}
+        onChoisir={(g) => onChange((v) => ({ ...v, gabarit: g }))}
+      >
         <AideGabarit onChoisir={(g) => onChange((v) => ({ ...v, gabarit: g }))} />
-      </fieldset>
+      </ChoixGabarit>
 
-      {abonnement && !compact && (
-        <label
-          htmlFor={`${nom}-abonnement`}
-          className="mt-6 flex cursor-pointer items-start gap-3 rounded-2xl border border-bord p-4 has-checked:border-aqua has-checked:bg-aqua/10"
-        >
-          <input
-            id={`${nom}-abonnement`}
-            type="checkbox"
-            checked={Boolean(vehicule.abonnement)}
-            onChange={(e) => onChange((v) => ({ ...v, abonnement: e.target.checked }))}
-            className="mt-0.5 size-5 accent-[var(--color-aqua)]"
-          />
-          <span className="text-sm">
-            <span className="font-semibold">
-              Abonnement {abonnement.frequence} : {euros(prixFormule(formule.id, vehicule.gabarit, true))} au lieu de{" "}
-              {euros(formule.prix[vehicule.gabarit])}
-            </span>
-            <span className="block text-doux">Sans engagement, créneau fixe, priorité de réservation.</span>
-          </span>
-        </label>
+      {!compact && (
+        <CaseAbonnement
+          className="mt-6"
+          id={`${nom}-abonnement`}
+          formule={vehicule.formule}
+          gabarit={vehicule.gabarit}
+          coche={Boolean(vehicule.abonnement)}
+          onChange={(coche) => onChange((v) => ({ ...v, abonnement: coche }))}
+        />
       )}
 
       {!compact && (
-        <fieldset className="mt-6">
-          <legend className="mb-3 text-sm font-semibold">Options</legend>
-          <ul className="divide-y divide-bord rounded-2xl border border-bord">
-            {OPTIONS.map((o) => (
-              <LigneOption key={o.id} option={o} vehicule={vehicule} nom={nom} onChange={onChange} />
-            ))}
-          </ul>
-        </fieldset>
+        <ListeOptions
+          className="mt-6"
+          nom={nom}
+          formule={vehicule.formule}
+          options={vehicule.options ?? {}}
+          onBasculer={(id, q) => onChange((v) => ({ ...v, options: basculerOption(v.options ?? {}, id, q) }))}
+        />
       )}
     </fieldset>
-  );
-}
-
-function prixOption(o: OptionTarif): string {
-  if (typeof o.prix !== "number") return `+${o.prix.min} à +${o.prix.max} €`;
-  if (o.unite) return `+${o.prix} € / ${o.unite.singulier}`;
-  return o.id === "exterieur-seul" ? `${o.prix} €` : `+${o.prix} €`;
-}
-
-function LigneOption({
-  option: o,
-  vehicule,
-  nom,
-  onChange,
-}: {
-  option: OptionTarif;
-  vehicule: Vehicule;
-  nom: string;
-  onChange: (maj: (v: Vehicule) => Vehicule) => void;
-}) {
-  const dispo = disponibilite(vehicule.formule, o.id);
-  const quantite = vehicule.options?.[o.id] ?? 0;
-  const idCase = `${nom}-${o.id}`;
-  const idRaison = `${idCase}-raison`;
-  const changer = (q: number) => onChange((v) => ({ ...v, options: basculerOption(v.options ?? {}, o.id, q) }));
-
-  return (
-    <li className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3">
-      <input
-        id={idCase}
-        type="checkbox"
-        checked={dispo.disponible && quantite > 0}
-        disabled={!dispo.disponible}
-        aria-describedby={dispo.disponible ? undefined : idRaison}
-        onChange={(e) => changer(e.target.checked ? (o.unite?.min ?? 1) : 0)}
-        className="size-5 shrink-0 accent-[var(--color-aqua)] disabled:cursor-not-allowed disabled:opacity-40"
-      />
-      <label htmlFor={idCase} className={`min-w-0 flex-1 text-sm ${dispo.disponible ? "cursor-pointer" : "cursor-not-allowed text-doux"}`}>
-        <span className={dispo.disponible ? "" : "line-through decoration-doux/60"}>{o.libelle}</span>
-        {o.aConfirmerSurPhotos && <span className="block text-xs text-doux">Montant confirmé sur vos photos</span>}
-        {!dispo.disponible && (
-          <span id={idRaison} className="block text-xs text-doux">
-            {dispo.raison}
-          </span>
-        )}
-      </label>
-      {o.unite && dispo.disponible && quantite > 0 && (
-        <select
-          aria-label={`Nombre de ${o.unite.pluriel}`}
-          value={quantite}
-          onChange={(e) => changer(Number(e.target.value))}
-          className="h-9 rounded-lg border border-bord bg-fond px-2 text-sm text-texte"
-        >
-          {Array.from({ length: o.unite.max - o.unite.min + 1 }, (_, k) => o.unite!.min + k).map((n) => (
-            <option key={n} value={n}>
-              {n} {n > 1 ? o.unite!.pluriel : o.unite!.singulier}
-            </option>
-          ))}
-        </select>
-      )}
-      <span className={`shrink-0 text-sm font-semibold tabular-nums ${dispo.disponible ? "text-doux" : "text-doux/50"}`}>
-        {prixOption(o)}
-      </span>
-    </li>
   );
 }
 
 // ---------------------------------------------------------------------------
 // Récapitulatif
 // ---------------------------------------------------------------------------
-
-function montantLigne(l: LigneDevis): string {
-  if (l.type === "offert") return "Offert";
-  if (l.type === "a-confirmer" && l.fourchette) return `+${l.fourchette.min} à ${l.fourchette.max} €`;
-  if (l.type === "deplacement" && l.montant === 0) return "Inclus";
-  if (l.montant < 0) return `−${euros(-l.montant)}`;
-  return euros(l.montant);
-}
 
 function Recapitulatif({
   id,
@@ -423,28 +277,8 @@ function Recapitulatif({
               + {resultat.aConfirmer.min} à {resultat.aConfirmer.max} € à confirmer sur vos photos
             </p>
           )}
-          <ul className="mt-6 space-y-2.5 border-t border-bord pt-5 text-sm">
-            {resultat.lignes.map((l, i) => (
-              <li key={i} className="flex justify-between gap-4">
-                <span className={l.type === "remise" || l.type === "offert" ? "text-accent" : "text-doux"}>
-                  {l.type === "deplacement" && !communeRenseignee ? "Déplacement : selon votre commune" : l.libelle}
-                </span>
-                <span className="shrink-0 font-semibold tabular-nums">
-                  {l.type === "deplacement" && !communeRenseignee ? "—" : montantLigne(l)}
-                </span>
-              </li>
-            ))}
-          </ul>
-          {(resultat.avertissements.length > 0 || resultat.optionsRefusees.length > 0) && (
-            <ul className="mt-5 space-y-2 text-sm text-doux">
-              {resultat.optionsRefusees.map((r) => (
-                <li key={`${r.vehicule}-${r.option}`}>• {r.raison}.</li>
-              ))}
-              {resultat.avertissements.map((a) => (
-                <li key={a.code}>• {a.message}</li>
-              ))}
-            </ul>
-          )}
+          <LignesDevis resultat={resultat} communeRenseignee={communeRenseignee} className="mt-6 border-t border-bord pt-5" />
+          <RemarquesDevis resultat={resultat} className="mt-5" />
           <Bouton href={lienReservation} taille="lg" className="mt-6 w-full">
             Réserver avec cette estimation
           </Bouton>
@@ -487,20 +321,4 @@ function Recapitulatif({
       </p>
     </aside>
   );
-}
-
-/** Texte annoncé aux lecteurs d'écran, différé pour ne pas répéter chaque frappe. */
-function useAnnonce(resultat: ResultatDevis): string {
-  const texte =
-    resultat.statut === "estimation"
-      ? `Total estimé : ${euros(resultat.total)}`
-      : resultat.statut === "invalide"
-        ? resultat.message
-        : `${resultat.message}.`;
-  const [annonce, setAnnonce] = useState(texte);
-  useEffect(() => {
-    const t = setTimeout(() => setAnnonce(texte), 600);
-    return () => clearTimeout(t);
-  }, [texte]);
-  return annonce;
 }
