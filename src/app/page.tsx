@@ -14,6 +14,8 @@ import { ZonesResume } from "@/components/sections/ZonesResume";
 import { AppelFinal, OffreLancement, QuiSommesNous } from "@/components/sections/Divers";
 import { EnTeteSection } from "@/components/sections/EnTetes";
 import { ListeFaq } from "@/components/sections/ListeFaq";
+import { HerosPareBrise } from "@/components/fx/HerosPareBrise";
+import { TitreEclat } from "@/components/fx/TitreEclat";
 import Link from "next/link";
 
 const REASSURANCE = [
@@ -30,16 +32,25 @@ export default function Accueil() {
   return (
     <>
       <section className="theme-sombre relative isolate overflow-hidden">
-        {/* Fond de repli du héros : le pare-brise WebGL viendra se poser ici (étape 5). */}
+        {/* Fond affiché avant le pare-brise WebGL, et sans lui. */}
         <div
           aria-hidden="true"
           className="absolute inset-0 -z-10 bg-[radial-gradient(60rem_40rem_at_75%_20%,rgb(46_230_214/0.16),transparent_60%),radial-gradient(50rem_30rem_at_10%_90%,rgb(15_42_74/0.9),transparent_70%)]"
+        />
+        <HerosPareBrise />
+        {/* Voile qui garantit le contraste du texte posé sur la vitre. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_top,rgb(11_18_32/0.94)_0%,rgb(11_18_32/0.82)_55%,rgb(11_18_32/0.5)_80%,rgb(11_18_32/0.15)_100%)] md:bg-[linear-gradient(to_right,rgb(11_18_32/0.9)_0%,rgb(11_18_32/0.7)_38%,rgb(11_18_32/0)_62%)]"
         />
         <div className="conteneur flex min-h-[100svh] flex-col justify-end pb-16 pt-32 md:justify-center md:pb-24">
           <p className="mb-5 text-sm font-semibold uppercase tracking-[0.18em] text-accent">
             Nettoyage auto à domicile · {zoneActive.ville} et alentours
           </p>
-          <h1 className="max-w-5xl text-[clamp(2.5rem,7vw,5.25rem)] font-extrabold leading-[0.98]">{site.promesse}</h1>
+          <TitreEclat
+            texte={site.promesse}
+            className="max-w-5xl text-[clamp(2.5rem,7vw,5.25rem)] font-extrabold leading-[0.98]"
+          />
           <p className="mt-6 max-w-2xl text-lg text-doux md:text-xl">
             Nettoyage intérieur et extérieur à domicile, à {c1}, {c2}, {c3}. Prix fermes validés sur vos photos avant le
             rendez-vous. Aucun supplément surprise.
