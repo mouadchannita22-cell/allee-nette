@@ -6,6 +6,7 @@ import { descriptionAccueil, estProduction, titreAccueil } from "@/lib/seo";
 import { EnTete } from "@/components/layout/EnTete";
 import { PiedDePage } from "@/components/layout/PiedDePage";
 import { BarreMobile } from "@/components/layout/BarreMobile";
+import { CaptureSource } from "@/components/layout/CaptureSource";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { MicroInteractions } from "@/components/fx/MicroInteractions";
 import { donneesEntreprise } from "@/lib/donnees-structurees";
@@ -68,6 +69,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </main>
         <PiedDePage />
         <BarreMobile telephone={lienTelephone()} whatsapp={whatsapp} />
+        <CaptureSource />
         <MicroInteractions />
       </body>
     </html>
