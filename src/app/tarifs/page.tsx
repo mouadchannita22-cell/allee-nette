@@ -11,6 +11,7 @@ import { ListeFaq } from "@/components/sections/ListeFaq";
 import { MentionPrix } from "@/components/sections/MentionPrix";
 import { AppelFinal } from "@/components/sections/Divers";
 import { Bouton } from "@/components/ui/Bouton";
+import { silhouettes } from "@/components/fx/voiture/silhouettes";
 
 const [c1, c2] = zoneActive.communesPrincipales;
 
@@ -20,7 +21,7 @@ export const metadata = metadonnees({
   chemin: "/tarifs",
 });
 
-export default function PageTarifs() {
+export default async function PageTarifs() {
   return (
     <>
       <EnTetePage
@@ -41,7 +42,7 @@ export default function PageTarifs() {
           <h2 id="titre-grille" className="sr-only">
             Les quatre formules
           </h2>
-          <GrilleFormules />
+          <GrilleFormules silhouettes={await silhouettes()} />
           <MentionPrix className="mt-6" />
         </div>
       </section>

@@ -70,6 +70,13 @@ export const PROFILS: Record<"S" | "M" | "L", ProfilVoiture> = {
   },
 };
 
+/** Profil intermédiaire entre deux gabarits (t de 0 à 1) : la voiture se transforme. */
+export function interpolerProfil(a: ProfilVoiture, b: ProfilVoiture, t: number): ProfilVoiture {
+  const r = {} as ProfilVoiture;
+  for (const cle of Object.keys(a) as (keyof ProfilVoiture)[]) r[cle] = a[cle] + (b[cle] - a[cle]) * t;
+  return r;
+}
+
 const CHANFREIN = { bevelEnabled: true, bevelSegments: 4, curveSegments: 24 } as const;
 
 /** Points d'une courbe quadratique, pour suivre le pavillon avec le toit. */
@@ -104,7 +111,17 @@ export type PiecesVoiture = {
   roues: THREE.Vector3[];
 };
 
-export function construireVoiture(p: ProfilVoiture): PiecesVoiture {
+/** Silhouette de profil : les formes 2D que l'on extrude (et que l'on dessine en SVG). */
+export type FormesVoiture = {
+  caisse: THREE.Shape;
+  bas: THREE.Shape;
+  vitrage: THREE.Shape;
+  toit: THREE.Shape;
+  /** Abscisses des essieux (arrière, avant). */
+  essieux: [number, number];
+};
+
+export function formesVoiture(p: ProfilVoiture): FormesVoiture {
   const L = p.longueur / 2;
   const yb = p.garde;
   const yc = p.ceinture;
@@ -164,8 +181,6 @@ export function construireVoiture(p: ProfilVoiture): PiecesVoiture {
   ligneToit.forEach((pt, i) => (i === 0 ? toit.moveTo(pt.x, pt.y + 0.035) : toit.lineTo(pt.x, pt.y + 0.035)));
   [...ligneToit].reverse().forEach((pt) => toit.lineTo(pt.x, pt.y - 0.03));
 
-  const geoCaisse = extruder(caisse, p.largeur, 0.09);
-
   const bas = new THREE.Shape();
   const debutBas = xArriere + arche * 0.82;
   const finBas = xAvant - arche * 0.82;
@@ -174,6 +189,18 @@ export function construireVoiture(p: ProfilVoiture): PiecesVoiture {
   bas.lineTo(finBas, yb + 0.1);
   bas.lineTo(debutBas, yb + 0.1);
   bas.lineTo(debutBas, yb - 0.06);
+
+  return { caisse, bas, vitrage, toit, essieux: [xArriere, xAvant] };
+}
+
+export function construireVoiture(p: ProfilVoiture): PiecesVoiture {
+  const { caisse, bas, vitrage, toit, essieux } = formesVoiture(p);
+  const L = p.longueur / 2;
+  const yc = p.ceinture;
+  const R = p.rayonRoue;
+  const [xArriere, xAvant] = essieux;
+
+  const geoCaisse = extruder(caisse, p.largeur, 0.09);
   const geoBas = extruder(bas, p.largeur + 0.03, 0.03);
   const geoVitrage = extruder(vitrage, p.largeur * 0.84, 0.07);
   const geoToit = extruder(toit, p.largeur * 0.8, 0.03);

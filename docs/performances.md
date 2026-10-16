@@ -4,10 +4,21 @@ Mesures Lighthouse 12 en profil **mobile** (Moto G Power simulé, 4G lente, proc
 
 Budgets du brief (partie 5.3) : LCP < 2,5 s, CLS < 0,1, INP < 200 ms, JavaScript initial < 200 Ko compressé hors module 3D chargé à la demande.
 
+Page d'accueil :
+
 | Étape | Perf. | LCP | Élément LCP | CLS | TBT | JS initial | Chargé ensuite |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | Avant les effets (fin d'étape 4) | 95 | 2,4 s | titre `h1` | 0 | 210 ms | 173 Ko | — |
 | + Héros « pare-brise » | 96 | 2,2 s | titre `h1` | 0 | 180 ms | 177 Ko | module 3D : 248 Ko, uniquement en mode complet |
+
+Page Tarifs :
+
+| Étape | Perf. | LCP | Élément LCP | CLS | TBT | JS initial | Chargé ensuite |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Avant la voiture 3D | 95 | 2,8 s | introduction de la page | 0 | 100 ms | 177 Ko | — |
+| + Voiture 3D et gabarits, prix qui roulent | 97 | 2,3 s | introduction de la page | 0 | 140 ms | 182 Ko | three.js partagé avec l'accueil (244 Ko, déjà en cache) + scène |
+
+D'une mesure à l'autre, Lighthouse fait varier le LCP de quelques dixièmes de seconde. Le LCP de 2,8 s mesuré avant l'effet, au-dessus du budget, est à reprendre à la recette, avec la médiane de trois mesures par page.
 
 Le SEO affiche 66 hors production : les pages portent volontairement `noindex` tant que le site n'est pas en ligne.
 

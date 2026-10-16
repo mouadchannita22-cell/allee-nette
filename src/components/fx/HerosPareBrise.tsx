@@ -2,46 +2,13 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
-import { connexionEconome, detecterMode, type ModeEffets, pointeurGrossier } from "./capacites";
+import { connexionEconome } from "./capacites";
 import { AfficheRepli } from "./pare-brise/AfficheRepli";
 import type { EtatPinceau } from "./pare-brise/ScenePareBrise";
+import { useModeEffets, useVisible } from "./useModeEffets";
 
 // Module 3D (three.js) chargé à la demande, jamais pendant le premier rendu.
 const ScenePareBrise = dynamic(() => import("./pare-brise/ScenePareBrise"), { ssr: false });
-
-type Decision = { mode: ModeEffets; tactile: boolean; affiche: boolean };
-
-/** Rappelle `rappel` une fois la page chargée et le navigateur au repos. */
-function apresChargement(rappel: () => void): () => void {
-  let id: number | undefined;
-  const auRepos = () => {
-    id =
-      typeof window.requestIdleCallback === "function"
-        ? window.requestIdleCallback(rappel, { timeout: 2500 })
-        : window.setTimeout(rappel, 600);
-  };
-  if (document.readyState === "complete") auRepos();
-  else window.addEventListener("load", auRepos, { once: true });
-  return () => {
-    window.removeEventListener("load", auRepos);
-    if (id === undefined) return;
-    if (typeof window.cancelIdleCallback === "function") window.cancelIdleCallback(id);
-    else window.clearTimeout(id);
-  };
-}
-
-const MODES: readonly ModeEffets[] = ["complet", "degrade", "reduit"];
-
-/**
- * `?fx=complet|degrade|reduit` force un mode pour la recette ; `?affiche`
- * produit l'image de repli (scripts/generer-affiche-heros.ts).
- */
-function decider(): Decision {
-  const parametres = new URLSearchParams(window.location.search);
-  const affiche = parametres.has("affiche");
-  const force = MODES.find((m) => m === parametres.get("fx"));
-  return { mode: affiche ? "complet" : (force ?? detecterMode()), tactile: pointeurGrossier(), affiche };
-}
 
 /**
  * Héros « pare-brise » : le visiteur regarde à travers une vitre sale qu'il
@@ -51,39 +18,11 @@ function decider(): Decision {
 export function HerosPareBrise() {
   const conteneur = useRef<HTMLDivElement>(null);
   const pinceauRef = useRef<EtatPinceau>({ x: 0, y: 0, t: -1, nouveau: true });
-  const [decision, setDecision] = useState<Decision | null>(null);
-  const [visible, setVisible] = useState(true);
-  const [pret, setPret] = useState(false);
-
   // Le niveau d'effets se décide après le chargement, pour ne pas retarder le titre.
-  useEffect(() => {
-    const annuler = apresChargement(() => setDecision(decider()));
-    const requete = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const changer = () => setDecision(decider());
-    requete.addEventListener("change", changer);
-    return () => {
-      annuler();
-      requete.removeEventListener("change", changer);
-    };
-  }, []);
-
+  const decision = useModeEffets();
   // Rendu en pause quand le héros sort de l'écran ou que l'onglet est caché.
-  useEffect(() => {
-    const section = conteneur.current?.parentElement;
-    if (!section) return;
-    let dansEcran = true;
-    const maj = () => setVisible(dansEcran && document.visibilityState === "visible");
-    const observateur = new IntersectionObserver(([entree]) => {
-      dansEcran = !!entree?.isIntersecting;
-      maj();
-    });
-    observateur.observe(section);
-    document.addEventListener("visibilitychange", maj);
-    return () => {
-      observateur.disconnect();
-      document.removeEventListener("visibilitychange", maj);
-    };
-  }, []);
+  const visible = useVisible(conteneur);
+  const [pret, setPret] = useState(false);
 
   // Le pointeur essuie la vitre. Écoute passive : le défilement n'est jamais bloqué.
   const effetActif = decision?.mode === "complet";
