@@ -26,3 +26,6 @@ export const EMPLACEMENTS = [
   "Votre garage ouvert",
   "Votre place de copropriété, avec l'accord écrit du syndic ou du règlement",
 ] as const;
+
+/** Moyens de paiement acceptés sur place, après la prestation. */
+export const PAIEMENT_SUR_PLACE = ["Carte", "Sans contact", "PayPal", "Espèces"] as const;

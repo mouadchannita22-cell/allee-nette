@@ -275,6 +275,29 @@ body:has(main > .theme-sombre:last-child) .vague-fond {
 }
 
 /* ==========================================================================
+   « Comment ça marche » : jauge d'eau et trajet sur l'écran du téléphone
+   ========================================================================== */
+@keyframes vague-jauge {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.vague-jauge {
+  animation: vague-jauge 2.4s linear infinite;
+}
+
+@keyframes trajet-pointille {
+  to {
+    stroke-dashoffset: -16;
+  }
+}
+
+.trajet-pointille {
+  animation: trajet-pointille 1.2s linear infinite;
+}
+
+/* ==========================================================================
    Mouvement réduit : aucune animation, aucune transition, tout reste visible.
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
