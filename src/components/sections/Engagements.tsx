@@ -1,19 +1,25 @@
 import Link from "next/link";
 import { CONDITIONS } from "@/data/conditions";
 import { GARANTIE } from "@/data/offres";
+import { fr } from "@/lib/typo";
+import { AnneauGarantie } from "@/components/fx/AnneauGarantie";
+import { AuPassage } from "@/components/fx/AuPassage";
+import { GoutteOnde } from "@/components/fx/GoutteOnde";
 import { EnTeteSection } from "./EnTetes";
 
-/** Garantie Retouche 24 h. L'anneau de minuterie animé arrive à l'étape des effets. */
+/** Garantie Retouche 24 h, autour d'un anneau de minuterie qui se remplit au passage. */
 export function Garantie() {
   return (
     <section className="theme-sombre py-24 md:py-32" aria-labelledby="titre-garantie">
       <div className="conteneur grid items-center gap-12 md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
-        <div aria-hidden="true" className="mx-auto flex aspect-square w-full max-w-72 items-center justify-center rounded-full border-[10px] border-aqua/80 shadow-eclat">
-          <span className="text-center font-titre">
-            <span className="block text-7xl font-extrabold">{CONDITIONS.retoucheHeures}</span>
-            <span className="text-xl font-bold">heures</span>
-          </span>
-        </div>
+        <AuPassage seuil={0.5}>
+          <AnneauGarantie heures={CONDITIONS.retoucheHeures}>
+            <span aria-hidden="true">
+              <span className="block text-7xl font-extrabold">{CONDITIONS.retoucheHeures}</span>
+              <span className="text-xl font-bold">heures</span>
+            </span>
+          </AnneauGarantie>
+        </AuPassage>
         <div>
           <EnTeteSection id="titre-garantie" surtitre={GARANTIE.nom} titre="Un point ne vous convient pas ? On revient." intro={GARANTIE.texte} />
           <ul className="mt-6 space-y-2 text-sm text-doux">
@@ -34,23 +40,26 @@ export function Garantie() {
   );
 }
 
-/** « Sans rinçage, aucun rejet ». La goutte animée arrive à l'étape des effets. */
+/** « Sans rinçage, aucun rejet » : une goutte tombe et son onde traverse le titre. */
 export function SansRincage() {
   return (
     <section className="theme-clair py-24 md:py-32" aria-labelledby="titre-sans-rincage">
-      <div className="conteneur">
-        <EnTeteSection
-          id="titre-sans-rincage"
-          surtitre="Sans rinçage, aucun rejet d'eau"
-          titre={
-            <>
-              Environ {CONDITIONS.eauLitres} litres de notre eau.
-              <br />
-              Rien dans le caniveau.
-            </>
-          }
-          intro="Nous lavons l'extérieur sans rinçage, panneau par panneau. Pas de jet, pas de haute pression, aucun écoulement chez vous ou dans la rue."
-        />
+      <AuPassage className="conteneur" seuil={0.35}>
+        <div className="grid items-center gap-6 md:grid-cols-[minmax(0,13rem)_minmax(0,1fr)] md:gap-12">
+          <GoutteOnde className="w-32 md:w-full" />
+          <EnTeteSection
+            id="titre-sans-rincage"
+            surtitre="Sans rinçage, aucun rejet d'eau"
+            titre={
+              <span className="titre-onde">
+                {fr(`Environ ${CONDITIONS.eauLitres} litres de notre eau.`)}
+                <br />
+                {fr("Rien dans le caniveau.")}
+              </span>
+            }
+            intro="Nous lavons l'extérieur sans rinçage, panneau par panneau. Pas de jet, pas de haute pression, aucun écoulement chez vous ou dans la rue."
+          />
+        </div>
         <ul className="mt-12 grid gap-4 sm:grid-cols-3">
           {[
             ["Votre eau ?", "Inutile : nous apportons la nôtre."],
@@ -63,7 +72,7 @@ export function SansRincage() {
             </li>
           ))}
         </ul>
-      </div>
+      </AuPassage>
     </section>
   );
 }

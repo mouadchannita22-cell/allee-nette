@@ -11,6 +11,7 @@ Page d'accueil :
 | Avant les effets (fin d'étape 4) | 95 | 2,4 s | titre `h1` | 0 | 210 ms | 173 Ko | — |
 | + Héros « pare-brise » | 96 | 2,2 s | titre `h1` | 0 | 180 ms | 177 Ko | module 3D : 248 Ko, uniquement en mode complet |
 | + « Comment ça marche » épinglé (médiane de 3 mesures) | 96 | 2,6 s | titre `h1` | 0 | 114 ms | 183 Ko | — |
+| + Avant/après, goutte « sans rinçage », anneau 24 h | 98 | 2,2 s | titre `h1` | 0 | 110 ms | 189 Ko | — |
 
 Sans bridage, le titre s'affiche dès la première image (175 ms) : le LCP simulé de 2,3 à 2,9 s vient de la simulation 4G, qui compte tout le JavaScript demandé avant ce premier affichage (React et Next, puis le calculateur de l'accueil). À traiter à la recette : alléger ce JavaScript initial pour passer nettement sous 2,5 s.
 

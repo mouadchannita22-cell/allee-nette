@@ -316,6 +316,196 @@ body:has(main > .theme-sombre:last-child) .vague-fond {
 }
 
 /* ==========================================================================
+   Effets joués une fois au passage (<AuPassage>, attribut data-vu).
+   Sans l'attribut (pas de JavaScript) : état final, fixe.
+   ========================================================================== */
+
+/* « Sans rinçage » : la goutte tombe, s'étale en ondes, l'onde traverse le titre. */
+.goutte-onde .goutte,
+.goutte-onde .onde,
+.goutte-onde .eclaboussure {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.goutte-onde .eclaboussure {
+  opacity: 0;
+}
+
+[data-vu="false"] .goutte-onde .goutte {
+  opacity: 0;
+}
+
+[data-vu="false"] .goutte-onde .onde {
+  opacity: 0 !important;
+}
+
+/* La goutte tombe, puis une nouvelle se forme : l'illustration finale est
+   la même qu'en l'absence d'animation. */
+[data-vu="true"] .goutte-onde .goutte {
+  animation:
+    goutte-reforme 0.8s var(--ease-glisse) 1.9s both,
+    goutte-chute 0.72s cubic-bezier(0.55, 0, 1, 0.45) backwards;
+}
+
+[data-vu="true"] .goutte-onde .onde {
+  animation: onde-etale 1.6s var(--ease-glisse) both;
+}
+
+[data-vu="true"] .goutte-onde .eclaboussure {
+  animation: eclaboussure 0.6s ease-out 0.68s both;
+}
+
+@keyframes goutte-chute {
+  from {
+    opacity: 1;
+    transform: translateY(-70px);
+  }
+  92% {
+    opacity: 1;
+    transform: translateY(72px);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(80px) scale(1.25, 0.35);
+  }
+}
+
+@keyframes goutte-reforme {
+  from {
+    opacity: 0;
+    transform: translateY(-18px) scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes onde-etale {
+  0% {
+    opacity: 0;
+    transform: scale(0.1);
+  }
+  15% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes eclaboussure {
+  from {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+  to {
+    opacity: 0;
+    transform: translate(calc(var(--sens) * 28px), -34px);
+  }
+}
+
+@property --onde {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: -100px;
+}
+
+/* Le texte reste entièrement lisible : seule une bande de couleur le traverse.
+   Désactivé en contraste forcé, où les dégradés disparaissent. */
+@media (forced-colors: none) {
+  [data-vu] .titre-onde {
+    display: inline-block;
+    background-image: radial-gradient(
+      circle at 0% 55%,
+      var(--texte) calc(var(--onde) - 130px),
+      var(--color-lagon) calc(var(--onde) - 70px),
+      var(--color-lagon) calc(var(--onde) - 40px),
+      var(--texte) var(--onde)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  [data-vu="true"] .titre-onde {
+    animation: titre-onde 2s cubic-bezier(0.3, 0.55, 0.4, 1) 0.72s both;
+  }
+}
+
+@keyframes titre-onde {
+  from {
+    --onde: -100px;
+  }
+  to {
+    --onde: 1300px;
+  }
+}
+
+/* Garantie : l'anneau de 24 graduations se remplit une fois. */
+.anneau-garantie .tete {
+  transform-box: view-box;
+  transform-origin: 120px 120px;
+}
+
+.anneau-garantie .graduation {
+  opacity: 0.55;
+}
+
+[data-vu="false"] .anneau-garantie .arc {
+  stroke-dashoffset: 100;
+}
+
+[data-vu="false"] .anneau-garantie .tete {
+  opacity: 0;
+}
+
+[data-vu="false"] .anneau-garantie .graduation {
+  opacity: 0.15;
+}
+
+[data-vu="true"] .anneau-garantie .arc {
+  animation: anneau-remplit 2.6s cubic-bezier(0.45, 0, 0.2, 1) both;
+}
+
+[data-vu="true"] .anneau-garantie .tete {
+  animation: anneau-tete 2.6s cubic-bezier(0.45, 0, 0.2, 1) both;
+}
+
+[data-vu="true"] .anneau-garantie .graduation {
+  animation: graduation 0.4s ease-out both;
+  animation-delay: calc(var(--i) * 0.105s);
+}
+
+@keyframes anneau-remplit {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes anneau-tete {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes graduation {
+  from {
+    opacity: 0.15;
+  }
+  to {
+    opacity: 0.55;
+  }
+}
+
+/* ==========================================================================
    Mouvement réduit : aucune animation, aucune transition, tout reste visible.
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
