@@ -1,24 +1,27 @@
 import { site, zoneActive } from "@/config/site";
-import { prixMinimum } from "@/data/offres";
+import { CONDITIONS } from "@/data/conditions";
+import { GARANTIE, prixMinimum } from "@/data/offres";
+import { questions } from "@/content/faq";
 import { Bouton } from "@/components/ui/Bouton";
 import { IconeFleche } from "@/components/ui/Icones";
+import { Calculateur } from "@/components/tarifs/Calculateur";
+import { CommentCaMarche } from "@/components/sections/CommentCaMarche";
+import { FormulesApercu } from "@/components/sections/FormulesApercu";
+import { Garantie, SansRincage } from "@/components/sections/Engagements";
+import { PourQui } from "@/components/sections/PourQui";
+import { AvantApres } from "@/components/sections/AvantApres";
+import { ZonesResume } from "@/components/sections/ZonesResume";
+import { AppelFinal, OffreLancement, QuiSommesNous } from "@/components/sections/Divers";
+import { EnTeteSection } from "@/components/sections/EnTetes";
+import { ListeFaq } from "@/components/sections/ListeFaq";
+import Link from "next/link";
 
 const REASSURANCE = [
   "Assurance professionnelle",
   "Sans rinçage, aucun rejet d'eau",
   "Photos avant/après le soir même",
-  "Retouche gratuite sous 24 h",
+  `Retouche gratuite sous ${CONDITIONS.retoucheHeures} h`,
   "Paiement après la prestation",
-] as const;
-
-const ETAPES = [
-  { titre: "Vous réservez et envoyez 3 photos.", texte: "Deux minutes en ligne, ou par WhatsApp." },
-  { titre: "On confirme le prix ferme sous 2 heures.", texte: "Avant tout rendez-vous. Aucun supplément surprise." },
-  {
-    titre: "On vient à l'heure dite avec tout le matériel.",
-    texte: "Il nous faut seulement une prise électrique à moins de 20 mètres.",
-  },
-  { titre: "Vous contrôlez avec nous, vous payez après.", texte: "Carte, sans contact, PayPal ou espèces." },
 ] as const;
 
 export default function Accueil() {
@@ -36,18 +39,16 @@ export default function Accueil() {
           <p className="mb-5 text-sm font-semibold uppercase tracking-[0.18em] text-accent">
             Nettoyage auto à domicile · {zoneActive.ville} et alentours
           </p>
-          <h1 className="max-w-4xl text-[clamp(2.5rem,7.2vw,5.75rem)] font-extrabold leading-[0.98]">
-            {site.promesse}
-          </h1>
+          <h1 className="max-w-5xl text-[clamp(2.5rem,7vw,5.25rem)] font-extrabold leading-[0.98]">{site.promesse}</h1>
           <p className="mt-6 max-w-2xl text-lg text-doux md:text-xl">
-            Nettoyage intérieur et extérieur à domicile, à {c1}, {c2}, {c3}. Prix fermes validés sur vos photos avant
-            le rendez-vous. Aucun supplément surprise.
+            Nettoyage intérieur et extérieur à domicile, à {c1}, {c2}, {c3}. Prix fermes validés sur vos photos avant le
+            rendez-vous. Aucun supplément surprise.
           </p>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
             <Bouton href="/reserver" taille="lg">
-              Réserver mon nettoyage — prix ferme sous 2 heures
+              Réserver mon nettoyage — prix ferme sous {CONDITIONS.delaiPrixFermeHeures} heures
             </Bouton>
-            <Bouton href="/tarifs" variante="secondaire" taille="lg">
+            <Bouton href="/tarifs#grille" variante="secondaire" taille="lg">
               Voir les tarifs <span className="font-normal text-doux">dès {prixMinimum()} €</span>
               <IconeFleche className="size-4" />
             </Bouton>
@@ -63,22 +64,44 @@ export default function Accueil() {
         </div>
       </section>
 
-      <section className="theme-clair py-24" aria-labelledby="titre-etapes">
+      <CommentCaMarche />
+      <FormulesApercu />
+      <OffreLancement />
+
+      <section className="theme-sombre relative z-10 pb-24 pt-12 md:pb-32" aria-labelledby="titre-estimation">
         <div className="conteneur">
-          <h2 id="titre-etapes" className="max-w-2xl text-3xl font-bold md:text-5xl">
-            Comment ça marche
-          </h2>
-          <ol className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-            {ETAPES.map((e, i) => (
-              <li key={e.titre} className="rounded-carte border border-bord bg-blanc p-6 shadow-douce">
-                <span className="font-titre text-sm font-bold text-accent">0{i + 1}</span>
-                <h3 className="mt-3 font-sans text-lg font-bold leading-snug tracking-normal">{e.titre}</h3>
-                <p className="mt-2 text-doux">{e.texte}</p>
-              </li>
-            ))}
-          </ol>
+          <EnTeteSection
+            id="titre-estimation"
+            surtitre="Estimation immédiate"
+            titre="Votre prix, en trois clics."
+            intro="Choisissez la formule, le gabarit et votre commune. Pour les options, les abonnements et les codes, le calculateur complet est sur la page Tarifs."
+          />
+          <div className="mt-10">
+            <Calculateur compact />
+          </div>
         </div>
       </section>
+
+      <Garantie />
+      <SansRincage />
+      <AvantApres />
+      <PourQui />
+      <ZonesResume />
+      <QuiSommesNous />
+
+      <section className="theme-clair pb-24 md:pb-32" aria-labelledby="titre-faq-courte">
+        <div className="conteneur grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]">
+          <div>
+            <EnTeteSection id="titre-faq-courte" surtitre="Questions fréquentes" titre="Vous vous demandez sûrement…" />
+            <Link href="/faq" className="mt-6 inline-flex items-center gap-2 font-semibold text-accent hover:underline">
+              Toutes les questions <IconeFleche className="size-4" />
+            </Link>
+          </div>
+          <ListeFaq questions={questions(["eau", "electricite", "presence", "paiement", "prix", "pluie"])} />
+        </div>
+      </section>
+
+      <AppelFinal titre={`${GARANTIE.nom.replace("Garantie ", "")} incluse, prix ferme avant le rendez-vous.`} />
     </>
   );
 }

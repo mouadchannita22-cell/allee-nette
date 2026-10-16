@@ -221,6 +221,18 @@ export const site = {
 
   mentionTva: "TVA non applicable, article 293 B du CGI",
 
+  /** Ville d'où viennent les deux associés (« Deux étudiants entrepreneurs de … »). */
+  villeAssocies: "",
+
+  /** Assurance responsabilité civile professionnelle. */
+  assurance: { assureur: "", numeroContrat: "" },
+
+  /**
+   * Règle d'annulation. Tant que `confirmee` vaut false, le site affiche
+   * « [À CONFIRMER] » à côté et la retire des données structurées.
+   */
+  annulation: { texte: "Report ou annulation gratuits jusqu'à la veille 18 h.", confirmee: false },
+
   /** Les deux entrepreneurs individuels qui facturent sous le nom commercial Allée Nette. */
   associes: {
     A: { prenomNom: "", siren: "", adresse: "", email: "", telephone: "" },

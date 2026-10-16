@@ -46,9 +46,14 @@ export type Formule = {
   /** Positionnement court : « entrée de gamme », « notre formule principale »… */
   positionnement: string;
   prix: Record<Gabarit, number>;
-  duree: string;
+  /** Durée sur place en minutes : [min, max]. Min = max pour une durée « environ ». */
+  dureeMinutes: readonly [number, number];
   /** Temps de séchage après la prestation, s'il y en a un. */
   sechage?: string;
+  /** Titre de la fiche détaillée. */
+  titrePage: string;
+  /** À qui s'adresse la formule. */
+  pourQui: string;
   inclus: readonly string[];
   nonInclus: readonly string[];
   argument: string;
@@ -66,7 +71,10 @@ export const FORMULES: readonly Formule[] = [
     nomCourt: "L'Intérieur Net",
     positionnement: "entrée de gamme",
     prix: { S: 59, M: 69, L: 79 },
-    duree: "1 h 15 à 1 h 45",
+    dureeMinutes: [75, 105],
+    titrePage: "L'Intérieur Net : un habitacle propre, sans bouger de chez vous.",
+    pourQui:
+      "La voiture du quotidien qui a besoin d'un vrai coup d'aspirateur et d'un habitacle net, sans y passer votre samedi.",
     inclus: [
       "Aspiration complète : sièges, moquettes, tapis, coffre",
       "Tableau de bord et consoles",
@@ -84,7 +92,10 @@ export const FORMULES: readonly Formule[] = [
     nomCourt: "Le Complet",
     positionnement: "notre formule principale",
     prix: { S: 109, M: 119, L: 129 },
-    duree: "2 h 30 à 3 h 15",
+    dureeMinutes: [150, 195],
+    titrePage: "Le Complet : intérieur et extérieur, chez vous.",
+    pourQui:
+      "La voiture familiale ou du quotidien qui a besoin d'un vrai coup de propre, dedans comme dehors.",
     inclus: [
       "Tout L'Intérieur Net",
       "Lavage extérieur sans rinçage",
@@ -103,7 +114,10 @@ export const FORMULES: readonly Formule[] = [
     nomCourt: "Le Grand Soin",
     positionnement: "approfondi",
     prix: { S: 109, M: 119, L: 139 },
-    duree: "3 h à 4 h",
+    dureeMinutes: [180, 240],
+    titrePage: "Le Grand Soin Intérieur : un habitacle sain, en profondeur.",
+    pourQui:
+      "Sièges tachés, odeurs, enfants, animaux : quand l'aspirateur ne suffit plus et que l'habitacle a besoin d'un nettoyage en profondeur.",
     sechage: "2 à 6 h de séchage",
     inclus: [
       "Tout L'Intérieur Net",
@@ -131,7 +145,10 @@ export const FORMULES: readonly Formule[] = [
     nomCourt: "Prêt à vendre",
     positionnement: "vente ou restitution de location",
     prix: { S: 129, M: 139, L: 159 },
-    duree: "Environ 3 h 40",
+    dureeMinutes: [220, 220],
+    titrePage: "Prêt à vendre ou à rendre : une voiture qui fait bonne impression.",
+    pourQui:
+      "Vous vendez votre voiture ou rendez une location : un habitacle propre en profondeur, et des photos prises sur place.",
     sechage: "puis séchage",
     inclus: ["Tout Le Grand Soin Intérieur", "6 photos d'annonce prises sur place"],
     nonInclus: [
@@ -148,6 +165,19 @@ export const FORMULES: readonly Formule[] = [
     page: "/pret-a-vendre-ou-a-rendre",
   },
 ];
+
+/** 75 → « 1 h 15 », 180 → « 3 h ». */
+export function formaterMinutes(minutes: number): string {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return m === 0 ? `${h} h` : `${h} h ${String(m).padStart(2, "0")}`;
+}
+
+/** Durée sur place : « 1 h 15 à 1 h 45 » ou « environ 3 h 40 ». */
+export function duree(f: Formule): string {
+  const [min, max] = f.dureeMinutes;
+  return min === max ? `environ ${formaterMinutes(min)}` : `${formaterMinutes(min)} à ${formaterMinutes(max)}`;
+}
 
 export function formule(id: FormuleId): Formule {
   const f = FORMULES.find((x) => x.id === id);

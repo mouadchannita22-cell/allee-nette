@@ -6,6 +6,8 @@ import { descriptionAccueil, estProduction, titreAccueil } from "@/lib/seo";
 import { EnTete } from "@/components/layout/EnTete";
 import { PiedDePage } from "@/components/layout/PiedDePage";
 import { BarreMobile } from "@/components/layout/BarreMobile";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { donneesEntreprise } from "@/lib/donnees-structurees";
 import "./globals.css";
 
 const unbounded = Unbounded({
@@ -58,6 +60,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Aller au contenu
         </a>
+        <JsonLd donnees={donneesEntreprise()} />
         <EnTete />
         <main id="contenu" className="flex-1">
           {children}

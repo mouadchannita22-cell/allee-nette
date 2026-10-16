@@ -8,6 +8,7 @@ import {
   OFFRES,
   OPTIONS,
   abonnementPour,
+  duree,
   formule as trouverFormule,
   type FormuleId,
   type Gabarit,
@@ -83,6 +84,7 @@ export function Calculateur({ initial, compact = false }: Props) {
         {vehicules.map((v, i) => (
           <BlocVehicule
             key={i}
+            compact={compact}
             index={i}
             total={vehicules.length}
             vehicule={v}
@@ -170,12 +172,14 @@ export function Calculateur({ initial, compact = false }: Props) {
 // ---------------------------------------------------------------------------
 
 function BlocVehicule({
+  compact,
   index,
   total,
   vehicule,
   onChange,
   onRetirer,
 }: {
+  compact: boolean;
   index: number;
   total: number;
   vehicule: Vehicule;
@@ -223,7 +227,7 @@ function BlocVehicule({
                 <span className="font-titre text-lg font-bold tabular-nums">{euros(f.prix[vehicule.gabarit])}</span>
               </span>
               <span className="mt-1 text-sm text-doux">
-                {f.positionnement} · {f.duree}
+                {f.positionnement} · {duree(f)}
               </span>
             </label>
           ))}
@@ -263,7 +267,7 @@ function BlocVehicule({
         <AideGabarit onChoisir={(g) => onChange((v) => ({ ...v, gabarit: g }))} />
       </fieldset>
 
-      {abonnement && (
+      {abonnement && !compact && (
         <label
           htmlFor={`${nom}-abonnement`}
           className="mt-6 flex cursor-pointer items-start gap-3 rounded-2xl border border-bord p-4 has-checked:border-aqua has-checked:bg-aqua/10"
@@ -285,14 +289,16 @@ function BlocVehicule({
         </label>
       )}
 
-      <fieldset className="mt-6">
-        <legend className="mb-3 text-sm font-semibold">Options</legend>
-        <ul className="divide-y divide-bord rounded-2xl border border-bord">
-          {OPTIONS.map((o) => (
-            <LigneOption key={o.id} option={o} vehicule={vehicule} nom={nom} onChange={onChange} />
-          ))}
-        </ul>
-      </fieldset>
+      {!compact && (
+        <fieldset className="mt-6">
+          <legend className="mb-3 text-sm font-semibold">Options</legend>
+          <ul className="divide-y divide-bord rounded-2xl border border-bord">
+            {OPTIONS.map((o) => (
+              <LigneOption key={o.id} option={o} vehicule={vehicule} nom={nom} onChange={onChange} />
+            ))}
+          </ul>
+        </fieldset>
+      )}
     </fieldset>
   );
 }

@@ -18,8 +18,8 @@ export function contientMot(texteNormalise: string, motCle: string): boolean {
   return ` ${texteNormalise} `.includes(` ${motCle} `);
 }
 
-/** Formate un montant en euros, sans décimales si elles sont nulles : « 119 € ». */
+/** Formate un montant en euros, sans décimales si elles sont nulles : « 119 € » (espace insécable). */
 export function euros(montant: number): string {
   const entier = Number.isInteger(montant);
-  return `${montant.toLocaleString("fr-FR", { minimumFractionDigits: entier ? 0 : 2, maximumFractionDigits: 2 })} €`;
+  return `${montant.toLocaleString("fr-FR", { minimumFractionDigits: entier ? 0 : 2, maximumFractionDigits: 2 })} €`;
 }

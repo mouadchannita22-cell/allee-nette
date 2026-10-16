@@ -1,6 +1,13 @@
 import { site } from "@/config/site";
+import type { Formule } from "@/data/offres";
 
 export type Lien = { href: string; libelle: string; description?: string };
+
+/** Page détaillée d'une formule, ou la grille des tarifs si sa page n'est pas encore ouverte. */
+export function lienFormule(f: Formule): string {
+  if (f.page === "/pret-a-vendre-ou-a-rendre" && !site.pages.pretAVendre) return "/tarifs#grille";
+  return f.page;
+}
 
 /** Pages de prestations, selon les pages ouvertes dans `config/site.ts`. */
 export const prestations: readonly Lien[] = [
