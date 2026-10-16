@@ -41,6 +41,8 @@ export type FormuleId = "interieur-net" | "complet" | "grand-soin" | "pret-a-ven
 export type Formule = {
   id: FormuleId;
   nom: string;
+  /** Nom raccourci pour les messages : « Le Grand Soin ». */
+  nomCourt: string;
   /** Positionnement court : « entrée de gamme », « notre formule principale »… */
   positionnement: string;
   prix: Record<Gabarit, number>;
@@ -61,6 +63,7 @@ export const FORMULES: readonly Formule[] = [
   {
     id: "interieur-net",
     nom: "L'Intérieur Net",
+    nomCourt: "L'Intérieur Net",
     positionnement: "entrée de gamme",
     prix: { S: 59, M: 69, L: 79 },
     duree: "1 h 15 à 1 h 45",
@@ -78,6 +81,7 @@ export const FORMULES: readonly Formule[] = [
   {
     id: "complet",
     nom: "Le Complet",
+    nomCourt: "Le Complet",
     positionnement: "notre formule principale",
     prix: { S: 109, M: 119, L: 129 },
     duree: "2 h 30 à 3 h 15",
@@ -96,6 +100,7 @@ export const FORMULES: readonly Formule[] = [
   {
     id: "grand-soin",
     nom: "Le Grand Soin Intérieur",
+    nomCourt: "Le Grand Soin",
     positionnement: "approfondi",
     prix: { S: 109, M: 119, L: 139 },
     duree: "3 h à 4 h",
@@ -123,6 +128,7 @@ export const FORMULES: readonly Formule[] = [
   {
     id: "pret-a-vendre",
     nom: "Prêt à vendre ou à rendre",
+    nomCourt: "Prêt à vendre",
     positionnement: "vente ou restitution de location",
     prix: { S: 129, M: 139, L: 159 },
     duree: "Environ 3 h 40",
@@ -178,6 +184,8 @@ export type OptionTarif = {
   exclusiveAvec?: readonly OptionId[];
   /** Montant confirmé sur photos : affiché en fourchette, exclu du total. */
   aConfirmerSurPhotos?: boolean;
+  /** Accord des messages : « déjà incluse » plutôt que « déjà inclus ». */
+  feminin?: boolean;
   /** Règle affichée dans la grille des tarifs. */
   regle: string;
 };
@@ -233,6 +241,7 @@ export const OPTIONS: readonly OptionTarif[] = [
     id: "desodorisation",
     libelle: "Désodorisation",
     prix: 20,
+    feminin: true,
     dejaIncluseDans: SOINS_INCLUS,
     regle: "Déjà incluse dans Le Grand Soin et Prêt à vendre",
   },

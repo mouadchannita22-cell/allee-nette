@@ -16,6 +16,9 @@ next-env.d.ts
 # Netlify
 .netlify
 
+# aperçus régénérés par scripts/generer-logo.ts
+/assets/apercus/
+
 # secrets : seules les variables d'exemple sont versionnées
 .env*
 !.env.example
