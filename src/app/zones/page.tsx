@@ -3,7 +3,7 @@ import { CONDITIONS, EMPLACEMENTS } from "@/data/conditions";
 import { DEPLACEMENT, formule } from "@/data/offres";
 import { questions } from "@/content/faq";
 import { metadonnees } from "@/lib/seo";
-import { VerificateurCommune } from "@/components/tarifs/VerificateurCommune";
+import { ZonesInteractives } from "@/components/fx/ZonesInteractives";
 import { EnTetePage, EnTeteSection } from "@/components/sections/EnTetes";
 import { ListeFaq } from "@/components/sections/ListeFaq";
 import { MentionPrix } from "@/components/sections/MentionPrix";
@@ -42,8 +42,9 @@ export default function PageZones() {
       />
 
       <section aria-labelledby="titre-verifier" className="theme-sombre relative z-10 pb-24">
-        <div className="conteneur grid gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
-          <div className="grid gap-4 sm:grid-cols-3">
+        <div className="conteneur">
+          <ZonesInteractives />
+          <div className="mt-12 grid gap-4 sm:grid-cols-3">
             {[
               { titre: "Zone 1", sous: `Jusqu'à ${zoneActive.rayons.zone1} km`, prix: "Déplacement inclus", regle: `Commande minimale ${DEPLACEMENT.zone1.commandeMinimale} €` },
               { titre: "Zone 2", sous: `De ${zoneActive.rayons.zone1} à ${zoneActive.rayons.zone2} km`, prix: `+${DEPLACEMENT.zone2.supplement} €`, regle: `${minimales} au minimum` },
@@ -57,12 +58,6 @@ export default function PageZones() {
               </div>
             ))}
             <MentionPrix className="sm:col-span-3" />
-          </div>
-          <div className="rounded-carte border border-aqua/30 bg-texte/[0.03] p-6 sm:p-8">
-            <h2 id="titre-verifier" className="sr-only">
-              Vérifier votre commune
-            </h2>
-            <VerificateurCommune />
           </div>
         </div>
       </section>
@@ -83,7 +78,6 @@ export default function PageZones() {
             Zone 2 : +{DEPLACEMENT.zone2.supplement} € ({zoneActive.zone2.length} communes)
           </h3>
           <ListeCommunes communes={zoneActive.zone2} />
-          <p className="mt-10 text-sm text-doux">La carte interactive des zones arrive prochainement.</p>
         </div>
       </section>
 

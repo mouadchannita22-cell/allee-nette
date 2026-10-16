@@ -5,7 +5,7 @@ import { VerificateurCommune } from "@/components/tarifs/VerificateurCommune";
 import { IconeFleche } from "@/components/ui/Icones";
 import { EnTeteSection } from "./EnTetes";
 
-/** Résumé des zones pour l'accueil. La carte animée arrive à l'étape des effets. */
+/** Résumé des zones pour l'accueil. La carte animée est sur /zones, pour garder l'accueil léger. */
 export function ZonesResume() {
   return (
     <section className="theme-sombre relative z-10 py-24 md:py-32" aria-labelledby="titre-zones">

@@ -22,6 +22,13 @@ Page Tarifs :
 | Avant la voiture 3D | 95 | 2,8 s | introduction de la page | 0 | 100 ms | 177 Ko | — |
 | + Voiture 3D et gabarits, prix qui roulent | 97 | 2,3 s | introduction de la page | 0 | 140 ms | 182 Ko | three.js partagé avec l'accueil (244 Ko, déjà en cache) + scène |
 
+Page Zones :
+
+| Étape | Perf. | LCP | Élément LCP | CLS | TBT | JS initial | Chargé ensuite |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| + Carte des zones, rendue côté serveur (premier essai) | 96 | 2,8 s | introduction de la page | 0 | 50 ms | 177 Ko | — (HTML : 44 Ko compressés) |
+| + Carte des zones, chargée après l'affichage (médiane de 3) | 97 | 2,6 s | introduction de la page | 0 | 52 ms | 179 Ko | contours : 30 Ko (HTML : 20,5 Ko compressés) |
+
 D'une mesure à l'autre, Lighthouse fait varier le LCP de quelques dixièmes de seconde. Le LCP de 2,8 s mesuré avant l'effet, au-dessus du budget, est à reprendre à la recette, avec la médiane de trois mesures par page.
 
 Le SEO affiche 66 hors production : les pages portent volontairement `noindex` tant que le site n'est pas en ligne.

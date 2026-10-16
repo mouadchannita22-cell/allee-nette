@@ -8,7 +8,7 @@ export type DecisionEffets = { mode: ModeEffets; tactile: boolean; affiche: bool
 const MODES: readonly ModeEffets[] = ["complet", "degrade", "reduit"];
 
 /** Rappelle `rappel` une fois la page chargée et le navigateur au repos. */
-function apresChargement(rappel: () => void): () => void {
+export function apresChargement(rappel: () => void): () => void {
   let id: number | undefined;
   const auRepos = () => {
     id =

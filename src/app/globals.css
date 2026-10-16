@@ -506,6 +506,96 @@ body:has(main > .theme-sombre:last-child) .vague-fond {
 }
 
 /* ==========================================================================
+   Carte des zones
+   ========================================================================== */
+.carte-zones path {
+  stroke: var(--color-nuit);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+  transition: fill 0.3s var(--ease-glisse);
+}
+
+.carte-zones path[data-zone="0"] {
+  fill: rgb(243 250 252 / 0.04);
+  stroke: rgb(243 250 252 / 0.12);
+}
+
+.carte-zones path[data-zone="1"] {
+  fill: rgb(46 230 214 / 0.6);
+}
+
+.carte-zones path[data-zone="2"] {
+  fill: rgb(46 230 214 / 0.25);
+}
+
+.carte-zones path[data-zone="1"]:hover,
+.carte-zones path[data-zone="2"]:hover {
+  fill: rgb(95 241 228 / 0.85);
+}
+
+.carte-zones path.choisie {
+  fill: var(--color-alerte);
+  animation: commune-choisie 1.4s ease-in-out infinite alternate;
+}
+
+@keyframes commune-choisie {
+  to {
+    fill: #ffd28a;
+  }
+}
+
+.carte-zones .rayon-carte {
+  fill: none;
+  stroke: rgb(243 250 252 / 0.45);
+  stroke-width: 1;
+  stroke-dasharray: 4 5;
+  vector-effect: non-scaling-stroke;
+}
+
+.carte-zones .legende-rayon {
+  fill: var(--color-ecume);
+  font-size: 13px;
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: var(--color-nuit);
+  stroke-width: 4px;
+}
+
+.carte-zones .nom-ville {
+  fill: var(--color-blanc);
+  font-family: var(--font-titre);
+  font-size: 15px;
+  font-weight: 700;
+  paint-order: stroke;
+  stroke: var(--color-nuit);
+  stroke-width: 4px;
+}
+
+/* Ondes concentriques depuis le point de départ. */
+.carte-zones .onde-carte {
+  fill: none;
+  stroke: var(--color-aqua);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  animation: onde-carte 4.8s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+}
+
+@keyframes onde-carte {
+  from {
+    opacity: 0.8;
+    transform: scale(0.04);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+/* ==========================================================================
    Mouvement réduit : aucune animation, aucune transition, tout reste visible.
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
