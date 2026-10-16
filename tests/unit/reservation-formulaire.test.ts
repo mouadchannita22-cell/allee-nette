@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { cibleErreur, etapeDuChamp, idChamp, idErreur } from "@/lib/reservation/champs";
+import { effetDuCode } from "@/lib/reservation/devis";
 import { erreursEtape, formulaireInitial } from "@/lib/reservation/schema";
 import { nouvelleVoiture } from "@/lib/reservation/voiture";
 
@@ -46,5 +47,36 @@ describe("champs du formulaire et résumé d'erreurs (partie 9.1)", () => {
     const cles = Object.keys(erreursEtape(1, donnees, new Date("2026-10-16T10:00:00Z")));
     expect(cles).toEqual(expect.arrayContaining(["voitures.0.modele", "voitures.0.etat", "voitures.1.animaux"]));
     for (const cle of cles) expect(cibleErreur(cle)).toBe(idChamp(cle));
+  });
+});
+
+describe("effet du code sur l'estimation (partie 7.6)", () => {
+  const voitures = [nouvelleVoiture()];
+
+  it("sans code : rien", () => {
+    expect(effetDuCode({ voitures, commune: "Saintes", code: "" })).toBeNull();
+  });
+
+  it("VOISIN : la remise rue groupée et sa condition", () => {
+    const effet = effetDuCode({ voitures, commune: "Saintes", code: "VOISIN" });
+    expect(effet?.lignes).toEqual([{ type: "remise", libelle: "Rue groupée (code VOISIN)", montant: -10 }]);
+    expect(effet?.remarques).toEqual(["Remise rue groupée : votre voisin doit réserver pour le même jour."]);
+  });
+
+  it("code parrain : remise filleul ; code inconnu : à vérifier, sans remise", () => {
+    expect(effetDuCode({ voitures, commune: "Saintes", code: "AN-2026-0042" })?.lignes[0]).toMatchObject({ montant: -10 });
+    const inconnu = effetDuCode({ voitures, commune: "Saintes", code: "PROMO" });
+    expect(inconnu?.lignes).toEqual([]);
+    expect(inconnu?.remarques[0]).toContain("« PROMO » non reconnu");
+  });
+
+  it("GARAGE : l'avantage et le créneau sous 7 jours", () => {
+    const effet = effetDuCode({ voitures, commune: "Saintes", code: "GARAGE" });
+    expect(effet?.lignes.length).toBe(1);
+    expect(effet?.remarques).toContain("Code GARAGE : créneau proposé sous 7 jours.");
+  });
+
+  it("hors zone : pas d'estimation chiffrée, donc pas d'effet affiché", () => {
+    expect(effetDuCode({ voitures, commune: "Royan", code: "VOISIN" })).toBeNull();
   });
 });

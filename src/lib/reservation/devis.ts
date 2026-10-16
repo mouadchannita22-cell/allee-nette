@@ -4,7 +4,7 @@
  * repris du navigateur).
  */
 import type { ZoneTarif } from "@/data/offres";
-import { calculerDevis, type ResultatDevis } from "@/lib/prix";
+import { calculerDevis, type Avertissement, type LigneDevis, type ResultatDevis } from "@/lib/prix";
 import { zoneDeCommune } from "@/lib/zones";
 import { vehiculeDevis, type VoitureFormulaire } from "./voiture";
 
@@ -25,6 +25,27 @@ export function zoneReservation(commune: string): ZoneTarif {
  */
 export function devisReservation(entree: EntreeReservation, zone = zoneReservation(entree.commune)): ResultatDevis {
   return calculerDevis({ vehicules: entree.voitures.map(vehiculeDevis), zone, code: entree.code });
+}
+
+/** Ce qu'apporte le code saisi : lignes ajoutées au devis et remarques (code inconnu, à vérifier…). */
+export type EffetCode = { lignes: LigneDevis[]; remarques: string[] };
+
+const REMARQUES_CODE: readonly Avertissement["code"][] = ["garage-creneau", "code-a-verifier", "code-inconnu"];
+
+/**
+ * Effet du code sur l'estimation, par comparaison avec le même devis sans
+ * code. `null` sans code, ou si l'estimation n'est pas chiffrée (hors zone…).
+ */
+export function effetDuCode(entree: EntreeReservation, zone = zoneReservation(entree.commune)): EffetCode | null {
+  if (!entree.code.trim()) return null;
+  const avec = devisReservation(entree, zone);
+  const sans = devisReservation({ ...entree, code: "" }, zone);
+  if (avec.statut !== "estimation" || sans.statut !== "estimation") return null;
+  const deja = new Set(sans.lignes.map((l) => l.libelle));
+  return {
+    lignes: avec.lignes.filter((l) => !deja.has(l.libelle)),
+    remarques: avec.avertissements.filter((a) => REMARQUES_CODE.includes(a.code)).map((a) => a.message),
+  };
 }
 
 /**

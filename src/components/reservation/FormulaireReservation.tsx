@@ -13,7 +13,7 @@ import { devinerGabarit } from "@/lib/gabarit";
 import { basculerOption } from "@/lib/prix";
 import { etapeDuChamp, idChamp } from "@/lib/reservation/champs";
 import { creneauxDisponibles } from "@/lib/reservation/creneaux";
-import { devisReservation } from "@/lib/reservation/devis";
+import { devisReservation, effetDuCode } from "@/lib/reservation/devis";
 import type { DonneesFormulaire, ErreursChamps } from "@/lib/reservation/formulaire";
 import {
   changerFormule,
@@ -25,6 +25,7 @@ import {
 import { trouverCommune } from "@/lib/zones";
 import type { EtatCommune } from "@/components/tarifs/ChampCommune";
 import { Bouton } from "@/components/ui/Bouton";
+import { EtapeCoordonnees } from "./EtapeCoordonnees";
 import { EtapeCreneaux } from "./EtapeCreneaux";
 import { EtapeFormule } from "./EtapeFormule";
 import { EtapeLieu } from "./EtapeLieu";
@@ -100,6 +101,7 @@ export function FormulaireReservation({ initial }: Props) {
   const etapesVues = useRef(new Set<number>());
 
   const zone = commune.commune?.zone ?? (commune.inconnue ? "hors-zone" : "zone1");
+  const entree = { voitures: donnees.voitures, commune: donnees.lieu.commune, code: donnees.coordonnees.code };
   const resultat = useMemo(
     () => devisReservation({ voitures: donnees.voitures, commune: donnees.lieu.commune, code: donnees.coordonnees.code }, zone),
     [donnees.voitures, donnees.lieu.commune, donnees.coordonnees.code, zone],
@@ -338,6 +340,14 @@ export function FormulaireReservation({ initial }: Props) {
                 onChoisir={(rang, creneau) =>
                   modifier((d) => ({ ...d, creneaux: d.creneaux.map((c, k) => (k === rang ? creneau : c)) }))
                 }
+              />
+            )}
+            {etape === 5 && (
+              <EtapeCoordonnees
+                coordonnees={donnees.coordonnees}
+                effetCode={effetDuCode(entree, zone)}
+                erreurs={erreurs}
+                onModifier={(maj) => modifier((d) => ({ ...d, coordonnees: { ...d.coordonnees, ...maj } }))}
               />
             )}
           </div>
