@@ -63,6 +63,8 @@ type PropsTexte = {
   inputMode?: HTMLAttributes<HTMLInputElement>["inputMode"];
   autoCapitalize?: string;
   placeholder?: string;
+  /** Identifiant d'une liste de suggestions (<datalist>). */
+  list?: string;
   className?: string;
   classeChamp?: string;
 };
@@ -83,6 +85,7 @@ export function ChampTexte({
   inputMode,
   autoCapitalize,
   placeholder,
+  list,
   className = "",
   classeChamp = "",
 }: PropsTexte) {
@@ -107,6 +110,7 @@ export function ChampTexte({
         autoCapitalize={autoCapitalize}
         spellCheck={type === "text" ? undefined : false}
         placeholder={placeholder}
+        list={list}
         aria-invalid={erreur ? true : undefined}
         aria-describedby={decritPar(cle, erreur, idAide)}
         className={`${classesChamp} ${classeChamp}`}
