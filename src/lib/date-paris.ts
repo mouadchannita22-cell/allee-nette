@@ -88,6 +88,14 @@ export function formaterJour(jour: number, avecAnnee = false): string {
   return avecAnnee ? `${texte} ${d.getUTCFullYear()}` : texte;
 }
 
+/** « AAAA-MM-JJ » → « 17 octobre 2026 » (date fixée dans les données, jamais l'heure du rendu). */
+export function formaterDateIso(iso: string): string {
+  const jour = depuisIso(iso);
+  if (jour === null) throw new RangeError(`Date invalide : ${iso}`);
+  const d = new Date(jour * JOUR_MS);
+  return `${d.getUTCDate() === 1 ? "1er" : d.getUTCDate()} ${MOIS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+}
+
 /** « vendredi 16 octobre 2026 à 15 h 42 », à l'heure de Paris. */
 export function formaterDateHeureParis(date: Date): string {
   const { heure, minute } = partiesParis(date);

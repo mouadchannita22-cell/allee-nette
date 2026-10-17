@@ -1,4 +1,5 @@
 import { readdirSync } from "node:fs";
+import createMDX from "@next/mdx";
 import type { NextConfig } from "next";
 
 const enTetesSecurite = [
@@ -79,4 +80,13 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+/**
+ * MDX (@next/mdx) : les textes longs (mentions légales, CGV, confidentialité)
+ * vivent dans src/content/*.mdx et sont importés par leur page. Les styles et
+ * les composants communs sont dans src/mdx-components.tsx. Aucune extension
+ * de Markdown : avec Turbopack, les options doivent rester sérialisables, et
+ * les ancres des titres sont posées par mdx-components.tsx.
+ */
+const withMDX = createMDX({});
+
+export default withMDX(nextConfig);
