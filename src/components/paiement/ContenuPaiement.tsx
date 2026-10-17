@@ -10,6 +10,7 @@ import {
 } from "@/data/paiement";
 import { formaterDateHeureParis } from "@/lib/date-paris";
 import { CLES_LIEN, parametresLien } from "@/lib/encaissement/api";
+import { configurationPayPal } from "@/lib/encaissement/paypal";
 import { configurationStripe, motifIndisponible } from "@/lib/encaissement/stripe";
 import { formaterEuros } from "@/lib/montant";
 import type { LienPaiement } from "@/lib/paiement";
@@ -21,6 +22,7 @@ import { LiensContact } from "@/components/reservation/LiensContact";
 import { ACompleter } from "@/components/ui/ACompleter";
 import { BoutonPayer } from "./BoutonPayer";
 import { LogosPaiement } from "./LogosPaiement";
+import { PaiementPayPal } from "./PaiementPayPal";
 import { PayerSurPlace } from "./PayerSurPlace";
 
 /** Paramètres de l'adresse de la page, tels que Next.js les fournit. */
@@ -143,18 +145,25 @@ function Beneficiaire({ lien }: { lien: LienPaiement }) {
 }
 
 /**
- * Bouton de paiement Stripe, ou son remplacement quand la clé de
- * l'encaisseur manque (ou qu'une clé réelle sert hors production).
+ * Bouton de paiement Stripe et, si PayPal est activé pour cet encaisseur,
+ * bouton PayPal en secours. Sans aucun des deux (clé Stripe absente, ou clé
+ * réelle hors production) : « Paiement en ligne bientôt disponible ».
  */
 function ZonePaiement({ lien }: { lien: LienPaiement }) {
-  const config = configurationStripe(lien.encaisseur);
-  if (config.etat !== "prete") {
-    if (config.etat !== "absente") console.error(`[paiement] ${motifIndisponible(lien.encaisseur, config)}`);
+  const stripe = configurationStripe(lien.encaisseur);
+  const paypal = configurationPayPal(lien.encaisseur);
+  if (stripe.etat !== "prete" && stripe.etat !== "absente") console.error(`[paiement] ${motifIndisponible(lien.encaisseur, stripe)}`);
+  if (paypal.etat === "incomplete" || paypal.etat === "reel-hors-production") {
+    console.error(`[paiement] PayPal inutilisable pour l'encaisseur ${lien.encaisseur} (${paypal.etat})`);
+  }
+  const parametres = parametresLien(lien);
+
+  if (stripe.etat !== "prete" && paypal.etat !== "pret") {
     return (
       <div className="rounded-2xl border border-bord bg-ecume p-5">
         <p className="font-semibold">{PAIEMENT_BIENTOT_DISPONIBLE}</p>
         <p className="mt-1 text-sm text-doux">
-          {config.etat === "reel-hors-production"
+          {stripe.etat === "reel-hors-production"
             ? fr("Cette version d'essai du site n'encaisse aucun paiement réel. Contactez-nous, ou réglez sur place après la prestation.")
             : fr("En attendant, contactez-nous ou réglez sur place après la prestation.")}
         </p>
@@ -163,14 +172,26 @@ function ZonePaiement({ lien }: { lien: LienPaiement }) {
   }
   return (
     <div>
-      {config.mode === "test" && (
-        <p className="mb-4 rounded-xl border border-avertissement/40 bg-alerte/15 px-4 py-2 text-sm font-semibold text-avertissement">
-          {MENTION_MODE_TEST}
-        </p>
+      {stripe.etat === "prete" && (
+        <>
+          {stripe.mode === "test" && (
+            <p className="mb-4 rounded-xl border border-avertissement/40 bg-alerte/15 px-4 py-2 text-sm font-semibold text-avertissement">
+              {MENTION_MODE_TEST}
+            </p>
+          )}
+          <BoutonPayer lien={parametres} libelle={`Payer ${formaterEuros(lien.centimes)} en ligne`} />
+          <LogosPaiement className="mt-3" />
+          <p className="mt-3 text-sm text-doux">{fr(REASSURANCE_PAIEMENT)}</p>
+        </>
       )}
-      <BoutonPayer lien={parametresLien(lien)} libelle={`Payer ${formaterEuros(lien.centimes)} en ligne`} />
-      <LogosPaiement className="mt-3" />
-      <p className="mt-3 text-sm text-doux">{fr(REASSURANCE_PAIEMENT)}</p>
+      {paypal.etat === "pret" && (
+        <PaiementPayPal
+          lien={parametres}
+          clientId={paypal.clientId}
+          environnement={paypal.environnement}
+          separe={stripe.etat === "prete"}
+        />
+      )}
     </div>
   );
 }

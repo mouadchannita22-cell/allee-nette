@@ -23,6 +23,7 @@ import Stripe from "stripe";
 import { site, type Encaisseur } from "@/config/site";
 import { enProduction } from "@/lib/environnement";
 import type { LienPaiement } from "@/lib/paiement";
+import { libelleLigne } from "./libelles";
 
 export type ModeStripe = "test" | "reel";
 
@@ -117,11 +118,6 @@ export function descriptionErreur(erreur: unknown): string {
  * fois pour toutes).
  */
 export const IDENTIFIANT_INTEGRATION = "allee-nette-lien-signe-kgttceqo";
-
-/** Ligne de la session : « Allée Nette — Le Complet M — réf. AN-2026-0142 ». */
-export function libelleLigne(lien: Pick<LienPaiement, "libelle" | "ref">): string {
-  return `${site.nom} — ${lien.libelle} — réf. ${lien.ref}`;
-}
 
 /** Page de remerciement. `{CHECKOUT_SESSION_ID}` est remplacé par Stripe : il reste tel quel, non encodé. */
 export function urlRetourSucces(lien: Pick<LienPaiement, "ref" | "encaisseur">, origine = site.url): string {

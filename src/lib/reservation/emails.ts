@@ -93,7 +93,8 @@ export function ligneObjet(texte: string): string {
 // Blocs communs aux versions HTML et texte
 // ---------------------------------------------------------------------------
 
-type Bloc =
+/** Bloc de contenu, rendu en HTML et en texte (partagé avec les e-mails de paiement). */
+export type Bloc =
   | { type: "titre"; texte: string }
   | { type: "paragraphe"; texte: string; alerte?: boolean }
   | { type: "lignes"; lignes: readonly (readonly [string, string])[] }
@@ -150,7 +151,8 @@ function blocTexte(bloc: Bloc): string {
   }
 }
 
-function mettreEnPage(titre: string, sousTitre: string, blocs: readonly Bloc[]): { html: string; texte: string } {
+/** Mise en page commune des e-mails (réservation, paiement) : versions HTML et texte. */
+export function mettreEnPage(titre: string, sousTitre: string, blocs: readonly Bloc[]): { html: string; texte: string } {
   const e = echapperHtml;
   const html = `<!doctype html>
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${e(titre)}</title></head>
