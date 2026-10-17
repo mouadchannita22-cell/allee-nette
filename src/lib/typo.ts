@@ -9,7 +9,7 @@ export function fr(texte: string): string {
   return texte
     .replace(/ ([?!:;»])/g, `${INSECABLE}$1`)
     .replace(/« /g, `«${INSECABLE}`)
-    .replace(/(\d) (?=(?:km|€|h|m|min|minutes|litres|heures|mois|ans|%|véhicules|communes)\b|€)/g, `$1${INSECABLE}`);
+    .replace(/(\d) (?=(?:km|€|h|m|min|minutes|litres|heures|jours|semaines|mois|ans|%|véhicules|communes)\b|€)/g, `$1${INSECABLE}`);
 }
 
 /** Applique `fr` si la valeur est une chaîne, sinon la renvoie telle quelle. */

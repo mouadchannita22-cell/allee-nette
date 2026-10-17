@@ -1,0 +1,199 @@
+import { communesDesservies, site, zoneActive } from "@/config/site";
+import { CONDITIONS } from "@/data/conditions";
+import { DELAI_REMBOURSEMENT_JOURS, DELAI_RETRACTATION_JOURS } from "@/data/legal";
+import { GARANTIE } from "@/data/offres";
+import { FACTURE_SUR_PLACE, VALIDITE_LIEN_JOURS } from "@/data/paiement";
+import { REGLES_CRENEAUX } from "@/data/reservation";
+import { MESSAGE_METEO } from "@/lib/prix";
+import {
+  Annexe,
+  Annulation,
+  Article,
+  Emplacements,
+  FormulaireRetractation,
+  Garantie,
+  ListeOptions,
+  MoyensPaiement,
+  PhotosDemandees,
+  PrixOption,
+  RenvoiArticle,
+  Sechage,
+  TableauPrix,
+  TexteExecutionAnticipee,
+  Zones,
+} from "@/components/legal/Cgv";
+import { AssuranceEnLigne, ContactSite, Mediateur, MentionTva, NomsAssocies } from "@/components/legal/Valeurs";
+import { AConfirmer } from "@/components/ui/ACompleter";
+
+{/*
+  Conditions générales de vente (/cgv).
+  Chaque article commence par <Article id="…" /> : l'ordre, la numérotation et
+  le sommaire viennent de ARTICLES_CGV (src/data/legal.ts), un test vérifie
+  que les deux listes restent identiques. Les prix, délais, zones, la
+  garantie et le texte de la case de réservation sont injectés depuis
+  src/data/*.ts et src/config/site.ts : ne les recopiez jamais ici. Après une
+  modification du texte, changez la date dans src/data/legal.ts (MISES_A_JOUR).
+*/}
+
+<Article id="objet" />
+
+Les présentes conditions générales de vente (CGV) s'appliquent aux prestations de nettoyage de véhicules réalisées à domicile sous le nom commercial {site.nom}, à {zoneActive.ville} et alentour, pour des clients particuliers.
+
+{site.nom} réunit deux entrepreneurs individuels, <NomsAssocies />, qui travaillent en partenariat. Chacun exerce en son nom propre : pour chaque prestation, votre cocontractant est **l'entrepreneur qui la réalise**. Son nom figure sur la confirmation de votre rendez-vous, sur la page de paiement et sur votre facture. Leurs coordonnées complètes sont dans les [mentions légales](/mentions-legales).
+
+Vous acceptez ces CGV en cochant la case prévue avant d'envoyer votre demande. Les CGV applicables sont celles en vigueur le jour de votre demande. Pour les professionnels, les conditions particulières figurant sur leur devis complètent ces CGV.
+
+<Article id="prestations-et-prix" />
+
+Le contenu de chaque formule, ce qu'elle comprend et ce qu'elle ne comprend pas, est décrit sur la page [Tarifs](/tarifs) et sur la page de chaque prestation. Nos prix sont des prix fermes par gabarit de véhicule, en euros, toutes taxes comprises : <MentionTva />. Aucune TVA ne s'y ajoute.
+
+<TableauPrix />
+
+Options et suppléments :
+
+<ListeOptions />
+
+<Sechage />
+
+Les abonnements et les offres commerciales en cours, avec leurs conditions, sont décrits sur la page [Tarifs](/tarifs). Le supplément de déplacement de la zone 2 est indiqué à <RenvoiArticle id="zones-et-deplacement" />.
+
+<Article id="prix-ferme-sur-photos" />
+
+Le calculateur du site et le formulaire de réservation affichent une estimation tirée de la grille. Le prix devient **ferme** quand nous avons vu votre voiture en photo : {CONDITIONS.photosDemandees} photos (<PhotosDemandees />), jointes à votre demande ou envoyées par message en rappelant votre référence.
+
+Nous vous confirmons par écrit (message ou e-mail), sous {CONDITIONS.delaiPrixFermeHeures} {CONDITIONS.delaiPrixFermeHeures > 1 ? "heures" : "heure"} après réception des photos, le prix ferme et le créneau retenu. Le contrat est conclu quand vous acceptez cette confirmation. Avant, vous pouvez renoncer librement : vous ne nous devez rien.
+
+Le prix confirmé ne change plus, sauf si vous acceptez par écrit, avant le rendez-vous, une option ou un supplément (voir <RenvoiArticle id="supplements" />).
+
+<Article id="supplements" />
+
+Tout supplément, par exemple pour un véhicule très sale (<PrixOption id="tres-sale" />) ou des poils d'animaux, est annoncé et accepté par vous **par écrit, avant le rendez-vous**. Aucun supplément n'est jamais imposé sur place.
+
+Si, à notre arrivée, la voiture est nettement plus sale que sur les photos, vous choisissez :
+
+- soit la formule réservée, au prix confirmé, sans supplément ;
+- soit le report du rendez-vous, sans frais.
+
+<Article id="conditions-d-intervention" />
+
+Nous intervenons uniquement chez vous, sur un emplacement privé, jamais sur la voie publique :
+
+<Emplacements />
+
+Pour une place de copropriété, vous nous présentez cet accord écrit avant le rendez-vous.
+
+Pour intervenir, il nous faut :
+
+- une **prise électrique à moins de {CONDITIONS.priseElectriqueMetres} m** de la voiture (notre rallonge mesure {CONDITIONS.rallongeMetres} m) ;
+- une voiture accessible, garée sur l'emplacement prévu : vous la déplacez vous-même, **nous ne conduisons jamais votre véhicule** ;
+- votre **présence {CONDITIONS.presenceMinutes} minutes au début**, pour l'état des lieux, **et {CONDITIONS.presenceMinutes} minutes à la fin**, pour le contrôle.
+
+Vous n'avez pas besoin de point d'eau : le lavage extérieur se fait sans rinçage, avec notre propre eau (environ {CONDITIONS.eauLitres} litres), sans aucun rejet d'eau.
+
+**Météo et restrictions d'eau.** {MESSAGE_METEO} La partie intérieure peut avoir lieu comme prévu, si vous le souhaitez.
+
+Si l'une de ces conditions manque le jour du rendez-vous (pas de prise, emplacement inaccessible, accord de copropriété absent), nous convenons ensemble d'un autre créneau.
+
+<Article id="zones-et-deplacement" />
+
+Nous intervenons dans {communesDesservies().length} communes autour de {zoneActive.ville}, réparties en deux zones selon la distance :
+
+<Zones />
+
+La liste des communes de chaque zone figure sur la page [Zones](/zones).
+
+<Article id="reservation-report-annulation" />
+
+Vous demandez un rendez-vous sur le site, avec jusqu'à {REGLES_CRENEAUX.nombreDemandes} créneaux par ordre de préférence, ou par téléphone ou message. La demande ne vous engage pas : le rendez-vous est fixé par notre confirmation écrite (voir <RenvoiArticle id="prix-ferme-sur-photos" />).
+
+**Report et annulation par vous.** <Annulation /> Prévenez-nous par téléphone ou par message.
+
+**Annulation plus tardive ou absence au rendez-vous.** <AConfirmer libelle="conséquences d'une annulation tardive ou d'une absence au rendez-vous" />
+
+**Report ou annulation par nous.** Si nous devons reporter un rendez-vous (météo, empêchement), nous vous prévenons au plus tôt et vous proposons un autre créneau. Si aucun ne vous convient, le rendez-vous est annulé sans frais pour vous, et ce que vous avez déjà payé vous est remboursé en totalité.
+
+<Article id="reservation-a-distance" />
+
+Toutes nos prestations se réservent **à distance** : sur le site, par téléphone ou par message.
+
+Si, pendant un rendez-vous, vous souhaitez une prestation qui n'était pas prévue (une autre voiture, une autre formule), elle n'est pas conclue sur place : nous la programmons pour une autre fois, réservée à distance comme toute autre. En effet, pour un contrat conclu au domicile du client, la loi interdit au professionnel de recevoir le moindre paiement avant un délai de sept jours.
+
+<Article id="paiement" />
+
+**Rien n'est payé au moment de la demande.** Nous ne demandons **aucun acompte** : vous ne réglez qu'une fois le prix ferme confirmé, au choix :
+
+<MoyensPaiement />
+
+**En ligne.** Le lien de paiement est valable {VALIDITE_LIEN_JOURS} jours. Vous payez sur la page sécurisée de Stripe, notre prestataire de paiement, ou avec PayPal si ce moyen vous est proposé : nous ne voyons ni ne conservons vos données bancaires.
+
+**Sur place.** Vous réglez après la prestation, une fois le contrôle fait avec vous. {FACTURE_SUR_PLACE}
+
+**Deux entrepreneurs, deux encaissements.** Chaque entrepreneur facture et encaisse les prestations qu'il réalise, sur son propre compte : la page de paiement et la facture indiquent son nom.
+
+<Article id="droit-de-retractation" />
+
+Le contrat étant conclu à distance, vous disposez d'un **délai de rétractation de {DELAI_RETRACTATION_JOURS} jours** à compter du jour où il est conclu (voir <RenvoiArticle id="prix-ferme-sur-photos" />), sans avoir à donner de motif.
+
+### Prestation réalisée pendant le délai
+
+Nos rendez-vous sont proposés dans les {REGLES_CRENEAUX.horizonSemaines} semaines qui suivent la demande : ils tombent souvent avant la fin de ce délai. Pour que la prestation puisse être réalisée pendant le délai, vous devez le demander expressément. C'est l'objet de cette case, cochée avant l'envoi de votre demande :
+
+<TexteExecutionAnticipee />
+
+Si vous préférez garder votre droit de rétractation entier, dites-le-nous par téléphone ou par message : nous fixerons le rendez-vous après la fin du délai.
+
+Conséquences de cette demande :
+
+- **une fois la prestation entièrement réalisée**, vous ne pouvez plus vous rétracter ;
+- si vous vous rétractez **après le début de la prestation**, vous payez un montant proportionnel à ce qui a été réalisé jusqu'au moment où vous nous informez de votre décision, par rapport au prix total ;
+- si vous vous rétractez **avant le début de la prestation**, vous ne devez rien.
+
+### Comment vous rétracter
+
+Avant la fin du délai, informez l'entrepreneur qui réalise votre prestation de votre décision, par courrier ou par e-mail : avec le [formulaire type de rétractation](#formulaire-de-retractation) en annexe, ou par toute autre déclaration dénuée d'ambiguïté. Ses coordonnées figurent dans le formulaire.
+
+### Remboursement
+
+Si vous avez déjà payé, nous vous remboursons la somme due au plus tard {DELAI_REMBOURSEMENT_JOURS} jours après le jour où nous sommes informés de votre décision, avec le moyen de paiement que vous avez utilisé, sauf accord de votre part pour un autre moyen. Ce remboursement ne vous coûte rien.
+
+<Article id="garantie-retouche" />
+
+<Garantie />
+
+Pour en profiter, envoyez-nous la photo par message ou par e-mail dans les {CONDITIONS.retoucheHeures} heures qui suivent la prestation : nous convenons ensemble du moment de notre retour. La {GARANTIE.nom} est une reprise du travail, pas un remboursement. Elle s'ajoute aux droits que vous tenez de la loi, sans les réduire.
+
+<Article id="responsabilite-et-assurance" />
+
+**État des lieux.** À notre arrivée, nous faisons avec vous un état des lieux photo du véhicule : rayures, taches, usures et défauts déjà présents sont notés et photographiés. Il sert de référence en cas de désaccord.
+
+**Avant notre arrivée**, retirez de l'habitacle et du coffre vos objets de valeur et vos effets personnels.
+
+**Le véhicule** reste sous votre garde : vous le garez et le déplacez vous-même, nous ne le conduisons jamais.
+
+**Notre responsabilité.** Nous répondons des dommages causés par notre faute pendant la prestation, dans les conditions prévues par la loi. Signalez-nous tout dommage pendant le contrôle de fin de prestation ou, à défaut, dès que possible par écrit, avec des photos. Chaque entrepreneur est assuré en responsabilité civile professionnelle : <AssuranceEnLigne />.
+
+<Article id="reclamations-et-mediation" />
+
+Pour toute réclamation, écrivez-nous d'abord, en rappelant votre référence :
+
+<ContactSite />
+
+Si notre réponse ne vous satisfait pas, ou si vous n'avez pas de réponse, vous pouvez recourir gratuitement au médiateur de la consommation ci-dessous. Vous devez lui adresser votre demande dans un délai d'un an à compter de votre réclamation écrite auprès de nous.
+
+<Mediateur />
+
+<Article id="donnees-personnelles" />
+
+Nous utilisons vos coordonnées, l'adresse d'intervention, les informations sur votre véhicule et vos photos pour établir le prix, organiser le rendez-vous, réaliser la prestation et la facturer. Le site ne dépose aucun cookie, et aucune donnée bancaire ne passe par nous. Tout est expliqué dans notre [politique de confidentialité](/confidentialite) : données reçues, destinataires, durées de conservation et exercice de vos droits.
+
+<Article id="droit-applicable" />
+
+Ces CGV et les contrats qu'elles régissent sont soumis au droit français et rédigés en français.
+
+En cas de litige, adressez-nous d'abord une réclamation écrite, puis, si besoin, saisissez le médiateur de la consommation (voir <RenvoiArticle id="reclamations-et-mediation" />). À défaut d'accord, le litige peut être porté devant le tribunal compétent selon les règles du droit commun ; en tant que consommateur, vous pouvez aussi saisir le tribunal du lieu où vous demeuriez au moment de la conclusion du contrat ou de la survenance du fait dommageable.
+
+<Annexe />
+
+Pour vous rétracter (voir <RenvoiArticle id="droit-de-retractation" />), imprimez ce formulaire et envoyez-le par courrier, ou recopiez-le dans un e-mail, à l'entrepreneur qui réalise votre prestation.
+
+<FormulaireRetractation />

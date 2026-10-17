@@ -7,6 +7,7 @@
  * le serveur le recalcule avec `devisReservation`.
  */
 import { z } from "zod";
+import { DELAI_RETRACTATION_JOURS } from "@/data/legal";
 import { CODES_GABARIT, FORMULES, OPTIONS, type OptionId } from "@/data/offres";
 import {
   ANIMAUX,
@@ -135,7 +136,7 @@ const validation = z.object(
   {
     cgv: z.literal(true, { error: "Acceptez les conditions générales de vente pour envoyer votre demande." }),
     executionAnticipee: z.literal(true, {
-      error: "Cochez cette case pour que la prestation puisse avoir lieu dans les 14 jours.",
+      error: `Cochez cette case pour que la prestation puisse avoir lieu dans les ${DELAI_RETRACTATION_JOURS} jours.`,
     }),
     donnees: z.literal(true, {
       error: "Acceptez le traitement de vos données : sans elles, nous ne pouvons pas traiter votre demande.",

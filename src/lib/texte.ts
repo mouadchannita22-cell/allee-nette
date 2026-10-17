@@ -23,3 +23,14 @@ export function euros(montant: number): string {
   const entier = Number.isInteger(montant);
   return `${montant.toLocaleString("fr-FR", { minimumFractionDigits: entier ? 0 : 2, maximumFractionDigits: 2 })} €`;
 }
+
+/**
+ * Première lettre en minuscule, pour reprendre un libellé dans une phrase
+ * (« Habitacle avant » → « habitacle avant »). Un premier mot qui contient
+ * une autre capitale (« PayPal », « GARAGE ») reste tel quel.
+ */
+export function initialeMinuscule(texte: string): string {
+  const premierMot = texte.match(/^\S+/)?.[0] ?? "";
+  if (/\p{Lu}/u.test(premierMot.slice(1))) return texte;
+  return texte.charAt(0).toLowerCase() + texte.slice(1);
+}
