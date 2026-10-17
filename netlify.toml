@@ -1,0 +1,11 @@
+# Configuration Netlify d'Allée Nette.
+# Next.js est détecté automatiquement (runtime OpenNext) : rien d'autre à installer.
+# Les variables d'environnement (clés, INDEXATION…) se règlent dans l'interface
+# Netlify, pas ici : les fonctions ne voient pas celles de ce fichier.
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "24"
