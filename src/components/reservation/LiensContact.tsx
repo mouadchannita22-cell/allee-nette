@@ -1,7 +1,6 @@
 "use client";
 
 import { site } from "@/config/site";
-import { suivre } from "@/lib/analytics";
 import { lienEmail, lienTelephone, lienWhatsApp } from "@/lib/contact";
 import { ACompleter } from "@/components/ui/ACompleter";
 import { classesBouton } from "@/components/ui/Bouton";
@@ -27,7 +26,7 @@ export function LiensContact({ messageWhatsApp, className = "" }: Props) {
     <ul className={`flex flex-col gap-3 sm:flex-row sm:flex-wrap ${className}`}>
       <li>
         {telephone ? (
-          <a href={telephone} onClick={() => suivre("clic_telephone")} className={lien}>
+          <a href={telephone} className={lien}>
             <IconeTelephone className="size-5" />
             Appeler le {site.telephone}
           </a>
@@ -39,7 +38,7 @@ export function LiensContact({ messageWhatsApp, className = "" }: Props) {
       </li>
       <li>
         {whatsapp ? (
-          <a href={whatsapp} target="_blank" rel="noopener noreferrer" onClick={() => suivre("clic_whatsapp")} className={lien}>
+          <a href={whatsapp} target="_blank" rel="noopener noreferrer" className={lien}>
             <IconeMessage className="size-5" />
             Écrire sur WhatsApp
             <span className="sr-only"> (nouvel onglet)</span>

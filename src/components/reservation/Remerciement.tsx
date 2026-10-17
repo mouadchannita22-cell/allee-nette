@@ -4,7 +4,6 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { site } from "@/config/site";
 import { MESSAGE_DEMANDE_RECUE, PHOTOS_DEMANDEES, RAPPELS_RENDEZ_VOUS } from "@/data/reservation";
-import { suivre } from "@/lib/analytics";
 import { lienWhatsApp, lienWhatsAppPhotos } from "@/lib/contact";
 import { FORMAT_REFERENCE } from "@/lib/reservation/api";
 import { MENTION_ESTIMATION } from "@/lib/prix";
@@ -79,7 +78,6 @@ export function ContenuRemerciement({ reference, demande }: Props) {
               href={whatsapp}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => suivre("clic_whatsapp")}
               className="mt-5 w-full sm:w-auto"
             >
               <IconeMessage className="size-5" />

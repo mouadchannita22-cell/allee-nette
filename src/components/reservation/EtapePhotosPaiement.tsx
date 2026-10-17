@@ -2,7 +2,6 @@
 
 import { site } from "@/config/site";
 import { MODES_PAIEMENT, PHOTOS_DEMANDEES, RAPPEL_PAIEMENT, type ModePaiement, type PhotoId } from "@/data/reservation";
-import { suivre } from "@/lib/analytics";
 import { lienWhatsApp } from "@/lib/contact";
 import { ACompleter } from "@/components/ui/ACompleter";
 import { classesBouton } from "@/components/ui/Bouton";
@@ -55,7 +54,6 @@ export function EtapePhotosPaiement({ photos, paiement, erreurs, onChoisirPhoto,
               href={whatsapp}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => suivre("clic_whatsapp")}
               className="font-semibold text-accent underline underline-offset-4"
             >
               Ou envoyez-les-nous sur WhatsApp<span className="sr-only"> (nouvel onglet)</span>

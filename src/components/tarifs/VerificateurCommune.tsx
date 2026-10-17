@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { suivre } from "@/lib/analytics";
+import { suivreUneFois } from "@/lib/analytics";
 import type { CommuneZonee } from "@/lib/zones";
 import { ChampCommune, type EtatCommune } from "./ChampCommune";
 
@@ -13,7 +13,7 @@ export function VerificateurCommune({ onCommune }: { onCommune?: (commune: Commu
       libelle="Êtes-vous dans notre zone ?"
       valeur={etat}
       onChange={(e) => {
-        if (!etat.saisie) suivre("calculateur_utilise", { outil: "zones" });
+        suivreUneFois("calculateur_utilise", { outil: "zones" });
         setEtat(e);
         onCommune?.(e.commune);
       }}

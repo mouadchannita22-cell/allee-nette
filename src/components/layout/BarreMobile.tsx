@@ -2,7 +2,6 @@
 
 import { Bouton } from "@/components/ui/Bouton";
 import { IconeMessage, IconeTelephone } from "@/components/ui/Icones";
-import { suivre } from "@/lib/analytics";
 
 type Props = { telephone: string | null; whatsapp: string | null };
 
@@ -24,16 +23,10 @@ export function BarreMobile({ telephone, whatsapp }: Props) {
         <Bouton href="/reserver" taille="md" className="min-h-12 rounded-xl">
           Réserver
         </Bouton>
-        <ActionContact href={telephone} libelle="Appeler" absent="Numéro à venir" onClick={() => suivre("clic_telephone")}>
+        <ActionContact href={telephone} libelle="Appeler" absent="Numéro à venir">
           <IconeTelephone className="size-5" />
         </ActionContact>
-        <ActionContact
-          href={whatsapp}
-          libelle="WhatsApp"
-          absent="WhatsApp à venir"
-          externe
-          onClick={() => suivre("clic_whatsapp")}
-        >
+        <ActionContact href={whatsapp} libelle="WhatsApp" absent="WhatsApp à venir" externe>
           <IconeMessage className="size-5" />
         </ActionContact>
       </div>
@@ -46,14 +39,12 @@ function ActionContact({
   libelle,
   absent,
   externe = false,
-  onClick,
   children,
 }: {
   href: string | null;
   libelle: string;
   absent: string;
   externe?: boolean;
-  onClick: () => void;
   children: React.ReactNode;
 }) {
   if (!href) {
@@ -67,7 +58,6 @@ function ActionContact({
   return (
     <a
       href={href}
-      onClick={onClick}
       className={classeAction}
       {...(externe ? { target: "_blank", rel: "noopener noreferrer" } : {})}
     >

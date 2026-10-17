@@ -1,9 +1,9 @@
 "use client";
 
-import { useId, useMemo, useRef, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { site } from "@/config/site";
 import { OFFRES, formule as trouverFormule, type FormuleId } from "@/data/offres";
-import { suivre } from "@/lib/analytics";
+import { suivreUneFois } from "@/lib/analytics";
 import { lienWhatsApp } from "@/lib/contact";
 import { versParametres, type EtatCalculateur } from "@/lib/devis-url";
 import {
@@ -42,18 +42,13 @@ export function Calculateur({ initial, compact = false }: Props) {
     return { saisie, commune: c, inconnue: Boolean(saisie && !c) };
   });
   const [code, setCode] = useState(initial?.code ?? "");
-  const dejaSuivi = useRef(false);
   const idRecap = `${useId()}-recap`;
 
   const zone = commune.commune?.zone ?? (commune.inconnue ? "hors-zone" : "zone1");
   const resultat = useMemo(() => calculerDevis({ vehicules, zone, code }), [vehicules, zone, code]);
 
-  const interagir = () => {
-    if (!dejaSuivi.current) {
-      dejaSuivi.current = true;
-      suivre("calculateur_utilise");
-    }
-  };
+  /** Première interaction avec un calculateur pendant la visite : `calculateur_utilise`, une seule fois. */
+  const interagir = () => suivreUneFois("calculateur_utilise", { outil: "calculateur" });
 
   const modifierVehicule = (i: number, maj: (v: Vehicule) => Vehicule) => {
     interagir();
@@ -303,7 +298,7 @@ function Recapitulatif({
           <p className="text-lg font-semibold">{resultat.message}.</p>
           <p className="mt-2 text-sm text-doux">Écrivez-nous : nous regardons ensemble si une tournée est possible.</p>
           {whatsapp ? (
-            <Bouton href={whatsapp} target="_blank" rel="noopener noreferrer" className="mt-5 w-full" onClick={() => suivre("clic_whatsapp")}>
+            <Bouton href={whatsapp} target="_blank" rel="noopener noreferrer" className="mt-5 w-full">
               Demander sur WhatsApp
             </Bouton>
           ) : (
