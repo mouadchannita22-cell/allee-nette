@@ -1,6 +1,6 @@
 import { communesDesservies, site, zoneActive } from "@/config/site";
 import { CONDITIONS } from "@/data/conditions";
-import { DELAI_REMBOURSEMENT_JOURS, DELAI_RETRACTATION_JOURS } from "@/data/legal";
+import { DELAI_REMBOURSEMENT_JOURS, DELAI_RETRACTATION_JOURS, PRESTATAIRES } from "@/data/legal";
 import { GARANTIE } from "@/data/offres";
 import { FACTURE_SUR_PLACE, VALIDITE_LIEN_JOURS } from "@/data/paiement";
 import { REGLES_CRENEAUX } from "@/data/reservation";
@@ -116,7 +116,7 @@ Vous demandez un rendez-vous sur le site, avec jusqu'à {REGLES_CRENEAUX.nombreD
 
 Toutes nos prestations se réservent **à distance** : sur le site, par téléphone ou par message.
 
-Si, pendant un rendez-vous, vous souhaitez une prestation qui n'était pas prévue (une autre voiture, une autre formule), elle n'est pas conclue sur place : nous la programmons pour une autre fois, réservée à distance comme toute autre. En effet, pour un contrat conclu au domicile du client, la loi interdit au professionnel de recevoir le moindre paiement avant un délai de sept jours.
+Si, pendant un rendez-vous, vous souhaitez une prestation qui n'était pas prévue (une autre voiture, une autre formule), elle n'est pas conclue sur place : nous la programmons pour une autre fois, réservée à distance comme toute autre. En effet, pour un contrat conclu au domicile du client, la loi interdit au professionnel de recevoir le moindre paiement avant un délai de sept jours à compter de sa conclusion.
 
 <Article id="paiement" />
 
@@ -124,7 +124,7 @@ Si, pendant un rendez-vous, vous souhaitez une prestation qui n'était pas prév
 
 <MoyensPaiement />
 
-**En ligne.** Le lien de paiement est valable {VALIDITE_LIEN_JOURS} jours. Vous payez sur la page sécurisée de Stripe, notre prestataire de paiement, ou avec PayPal si ce moyen vous est proposé : nous ne voyons ni ne conservons vos données bancaires.
+**En ligne.** Le lien de paiement est valable {VALIDITE_LIEN_JOURS} jours. Vous payez sur la page sécurisée de {PRESTATAIRES.paiement}, notre prestataire de paiement, ou avec {PRESTATAIRES.paypal} si ce moyen vous est proposé : nous ne voyons ni ne conservons vos données bancaires.
 
 **Sur place.** Vous réglez après la prestation, une fois le contrôle fait avec vous. {FACTURE_SUR_PLACE}
 
@@ -168,9 +168,9 @@ Pour en profiter, envoyez-nous la photo par message ou par e-mail dans les {COND
 
 **Avant notre arrivée**, retirez de l'habitacle et du coffre vos objets de valeur et vos effets personnels.
 
-**Le véhicule** reste sous votre garde : vous le garez et le déplacez vous-même, nous ne le conduisons jamais.
+**Le véhicule** : vous le garez et le déplacez vous-même, nous ne le conduisons jamais.
 
-**Notre responsabilité.** Nous répondons des dommages causés par notre faute pendant la prestation, dans les conditions prévues par la loi. Signalez-nous tout dommage pendant le contrôle de fin de prestation ou, à défaut, dès que possible par écrit, avec des photos. Chaque entrepreneur est assuré en responsabilité civile professionnelle : <AssuranceEnLigne />.
+**Notre responsabilité.** Nous répondons des dommages causés par notre faute pendant la prestation, dans les conditions prévues par la loi. Signalez-nous tout dommage pendant le contrôle de fin de prestation ou, à défaut, dès que possible par écrit, avec des photos. Assurance responsabilité civile professionnelle : <AssuranceEnLigne />.
 
 <Article id="reclamations-et-mediation" />
 
