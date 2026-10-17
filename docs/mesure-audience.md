@@ -8,8 +8,8 @@ provenance des visites (paramètres UTM et codes).
 > `NEXT_PUBLIC_UMAMI_WEBSITE_ID` est vide, le site ne charge aucun script de
 > mesure. Une fois allumée, elle **ne dépose aucun cookie** : pas de bandeau à
 > afficher (à faire confirmer par le relecteur juridique, voir
-> `docs/a-completer.md`). Ce qui part vers Umami ne contient ni nom, ni coordonnées, ni
-> référence de demande.
+> `docs/a-completer.md`). Ce qui part vers Umami ne contient ni nom, ni
+> coordonnées, ni référence de demande.
 
 Pourquoi Umami : il compte les pages vues **et des événements personnalisés**
 (étapes de la réservation, paiements…), sans cookie. Cloudflare Web Analytics,
@@ -31,7 +31,8 @@ ajustement 3).
   l'affichage de la page (LCP) ni le JavaScript du site.
 - **Seul le vrai domaine compte** (`data-domains`) : le domaine de
   `NEXT_PUBLIC_SITE_URL`. Les aperçus Netlify (`deploy-preview-…`) et le site
-  lancé sur votre ordinateur ne sont pas comptés.
+  lancé sur votre ordinateur ne sont pas comptés, tant que cette variable vaut
+  l'adresse publique dans tous les contextes Netlify.
 - **Adresses sans paramètres** (`data-exclude-search`, `data-exclude-hash`) :
   `/reserver/merci?ref=AN-2026-0042` part comme `/reserver/merci`, et la page de
   paiement sans sa signature. Un filtre (`data-before-send`, fonction
@@ -124,8 +125,8 @@ Aucune autre donnée ne peut accompagner un événement : le code le refuse
 → … → `reservation_etape_7` → `demande_envoyee`. Une forte baisse entre deux
 étapes montre l'étape à simplifier. `paiement_initie` sans `paiement_reussi` :
 paiement abandonné ou refusé (le détail est dans Stripe ou PayPal, pas dans
-Umami). Les clics vers le téléphone et WhatsApp sont aussi des demandes : comptez-les
-avec `demande_envoyee`.
+Umami). Un clic vers le téléphone ou WhatsApp est souvent une demande passée
+autrement : lisez-les avec `demande_envoyee`.
 
 ## 4. D'où viennent les clients : UTM et codes
 
@@ -172,7 +173,9 @@ Gardez des valeurs courtes, en minuscules, toujours écrites de la même façon 
   (chaque événement branché à un seul endroit, liens de contact reconnus).
 - `npx playwright test tests/e2e/mesure.spec.ts` (après `npm run build`) : aucun
   cookie ni requête vers un site tiers sur l'accueil, /reserver et /paiement ;
-  `calculateur_utilise` une seule fois.
+  `calculateur_utilise` une seule fois ; /garage ouvre la réservation avec le
+  code GARAGE (la source envoyée avec la demande est vérifiée dans
+  `tests/e2e/reservation.spec.ts`).
 - Le chargement du script lui-même se vérifie avec un identifiant factice défini
   **au build et aux tests** (la requête vers Umami est interceptée, rien ne part) :
 
