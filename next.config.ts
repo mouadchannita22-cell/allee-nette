@@ -49,6 +49,9 @@ const nextConfig: NextConfig = {
     // Jamais de secret dans cette liste : elle est inscrite dans le code compilé.
     CONTEXTE_DEPLOIEMENT: process.env.CONTEXT ?? "",
     LOGOS_PAIEMENT_PRESENTS: logosPaiementPresents(),
+    // Identifiant public d'Umami, inscrit même vide : sans lui, le code de
+    // mesure disparaît du JavaScript envoyé (components/layout/ScriptUmami.tsx).
+    NEXT_PUBLIC_UMAMI_WEBSITE_ID: process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID?.trim() ?? "",
   },
   images: {
     formats: ["image/avif", "image/webp"],

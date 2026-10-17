@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { MesureAudience } from "@/components/layout/MesureAudience";
 import { ScriptUmami } from "@/components/layout/ScriptUmami";
@@ -168,6 +170,17 @@ describe("configuration du script Umami", () => {
     const element = MesureAudience();
     expect(element?.type).toBe(ScriptUmami);
     expect(element?.props).toMatchObject({ idSite: "id-essai", src: SRC_UMAMI_PAR_DEFAUT });
+  });
+
+  it("sans identifiant au build, le chargeur côté navigateur se réduit à rien", () => {
+    const configuration = { idSite: "id-essai", src: SRC_UMAMI_PAR_DEFAUT, domaine: "allee-nette.fr" };
+    vi.stubEnv("NEXT_PUBLIC_UMAMI_WEBSITE_ID", "");
+    expect(ScriptUmami(configuration)).toBeNull();
+    vi.stubEnv("NEXT_PUBLIC_UMAMI_WEBSITE_ID", "id-essai");
+    expect(ScriptUmami(configuration)?.props).toEqual(configuration);
+    // next.config.ts inscrit l'identifiant même vide : le code jamais atteint est retiré au build.
+    const config = readFileSync(join(import.meta.dirname, "..", "..", "next.config.ts"), "utf8");
+    expect(config).toMatch(/NEXT_PUBLIC_UMAMI_WEBSITE_ID: process\.env\.NEXT_PUBLIC_UMAMI_WEBSITE_ID\?\.trim\(\) \?\? ""/);
   });
 });
 

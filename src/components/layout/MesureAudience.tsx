@@ -5,10 +5,11 @@ import { ScriptUmami } from "./ScriptUmami";
 /**
  * Mesure d'audience sans cookie (Umami), montée une fois dans le layout.
  *
- * Rien n'est rendu, ni aucun JavaScript envoyé au navigateur, tant que
- * NEXT_PUBLIC_UMAMI_WEBSITE_ID n'est pas défini (au build). Les variables
- * NEXT_PUBLIC_ sont inscrites dans le code compilé : changer leur valeur
- * impose un nouveau build. Mode d'emploi : docs/mesure-audience.md.
+ * Tant que NEXT_PUBLIC_UMAMI_WEBSITE_ID n'est pas défini (au build), rien
+ * n'est rendu et le chargeur est retiré du JavaScript envoyé au navigateur
+ * (ScriptUmami.tsx, next.config.ts). Les variables NEXT_PUBLIC_ sont
+ * inscrites dans le code compilé : changer leur valeur impose un nouveau
+ * build. Mode d'emploi : docs/mesure-audience.md.
  */
 export function MesureAudience() {
   const configuration = configurationUmami(

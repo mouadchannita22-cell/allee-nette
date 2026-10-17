@@ -21,10 +21,13 @@ ajustement 3).
 ## 1. Comment ça marche
 
 - **Composant** : `src/components/layout/MesureAudience.tsx`, monté une fois dans
-  le layout. Sans identifiant, il ne rend rien et n'ajoute aucun JavaScript.
-- **Chargement tardif** : le script Umami est demandé **après le chargement
-  complet de la page**, quand le navigateur est au repos (stratégie
-  `lazyOnload` de `next/script`). Il n'est pas préchargé : il ne retarde ni
+  le layout. Sans identifiant, il ne rend rien et son chargeur est retiré du
+  JavaScript envoyé au navigateur (`next.config.ts` inscrit l'identifiant au
+  build, même vide, ce qui permet de supprimer ce code).
+- **Chargement tardif** : le script Umami est ajouté **après le chargement
+  complet de la page** (événement `load`), quand le navigateur est au repos
+  (`src/components/layout/ScriptUmami.tsx`, quelques lignes plutôt que
+  `next/script`, plus lourd). Il n'est pas préchargé : il ne retarde ni
   l'affichage de la page (LCP) ni le JavaScript du site.
 - **Seul le vrai domaine compte** (`data-domains`) : le domaine de
   `NEXT_PUBLIC_SITE_URL`. Les aperçus Netlify (`deploy-preview-…`) et le site
