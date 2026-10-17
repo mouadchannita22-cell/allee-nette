@@ -16,7 +16,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "carte": "node scripts/generer-carte.ts",
-    "affiche": "node scripts/generer-affiche-heros.ts"
+    "affiche": "node scripts/generer-affiche-heros.ts",
+    "a-completer": "node scripts/a-completer.ts"
   },
   "dependencies": {
     "@gsap/react": "2.1.2",
