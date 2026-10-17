@@ -193,6 +193,11 @@ export type Associe = {
   /** « Prénom Nom », tel qu'il apparaît sur la page de paiement et les factures. */
   prenomNom: string;
   siren: string;
+  /**
+   * Registre d'immatriculation, tel qu'il figure sur l'attestation reçue à la
+   * création de l'entreprise (mentions légales).
+   */
+  immatriculation: string;
   adresse: string;
   email: string;
   telephone: string;
@@ -235,8 +240,8 @@ export const site = {
 
   /** Les deux entrepreneurs individuels qui facturent sous le nom commercial Allée Nette. */
   associes: {
-    A: { prenomNom: "", siren: "", adresse: "", email: "", telephone: "" },
-    B: { prenomNom: "", siren: "", adresse: "", email: "", telephone: "" },
+    A: { prenomNom: "", siren: "", immatriculation: "", adresse: "", email: "", telephone: "" },
+    B: { prenomNom: "", siren: "", immatriculation: "", adresse: "", email: "", telephone: "" },
   } satisfies Record<Encaisseur, Associe>,
 
   hebergeur: {

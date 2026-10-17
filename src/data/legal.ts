@@ -25,3 +25,7 @@ export const RELECTURE_JURIDIQUE = {
   faite: false,
   libelle: "texte à faire relire par un professionnel du droit avant l'ouverture du site",
 } as const;
+
+/** Attribution des contours de la carte des zones : sous la carte et dans les mentions légales. */
+export const CREDIT_CARTE = "Contours des communes : IGN Admin Express, Licence Ouverte 2.0.";
+

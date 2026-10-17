@@ -1,4 +1,5 @@
 import { communesDesservies, ZONE_ACTIVE, zoneActive } from "@/config/site";
+import { CREDIT_CARTE } from "@/data/legal";
 
 /** Données produites par `npm run carte` (public/carte-zone.json). */
 export type DonneesCarte = {
@@ -21,7 +22,7 @@ function Legende() {
       <span className="flex items-center gap-2">
         <span aria-hidden="true" className="size-3 rounded-sm border border-bord" /> Sur demande
       </span>
-      <span className="w-full text-xs">Contours des communes : IGN Admin Express, Licence Ouverte 2.0.</span>
+      <span className="w-full text-xs">{CREDIT_CARTE}</span>
     </figcaption>
   );
 }

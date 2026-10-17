@@ -1,0 +1,68 @@
+import { site } from "@/config/site";
+import { CREDIT_CARTE } from "@/data/legal";
+import {
+  Associes,
+  Assurance,
+  ContactSite,
+  Hebergeur,
+  Mediateur,
+  MentionTva,
+  NomsAssocies,
+} from "@/components/legal/Valeurs";
+
+{/*
+  Mentions légales (/mentions-legales).
+  Noms, adresses, SIREN, hébergeur, médiateur et assurance viennent de
+  src/config/site.ts : ne les écrivez jamais ici. Après une modification du
+  texte, changez la date dans src/data/legal.ts (MISES_A_JOUR).
+*/}
+
+## Éditeurs du site
+
+{site.nom} est un nom commercial utilisé par deux entrepreneurs individuels, dans le cadre d'un partenariat. Chacun exerce en son nom propre et facture les prestations qu'il réalise : son nom figure sur la confirmation de votre rendez-vous, sur la page de paiement et sur votre facture.
+
+<Associes />
+
+### Nous contacter
+
+<ContactSite />
+
+## Directeurs de la publication
+
+<NomsAssocies />.
+
+## TVA
+
+<MentionTva /> : les prix affichés sur le site sont les prix que vous payez, sans TVA en plus.
+
+## Hébergeur
+
+<Hebergeur />
+
+## Médiateur de la consommation
+
+En cas de litige, après une réclamation écrite auprès de nous, vous pouvez recourir gratuitement au médiateur de la consommation suivant :
+
+<Mediateur />
+
+Le déroulement d'une réclamation et de la médiation est décrit dans nos [conditions générales de vente](/cgv#reclamations-et-mediation).
+
+## Assurance responsabilité civile professionnelle
+
+<Assurance />
+
+## Propriété intellectuelle
+
+Le logo, les textes et les illustrations de ce site sont protégés par le droit d'auteur et appartiennent à ses éditeurs, sauf mention contraire. Toute reproduction ou réutilisation, même partielle, sans leur accord écrit est interdite.
+
+Les photos avant/après présentées sur le site sont uniquement les nôtres : publiées avec l'accord écrit du client, plaques d'immatriculation floutées.
+
+## Crédits
+
+- {CREDIT_CARTE}
+- Polices de caractères : Unbounded et Plus Jakarta Sans, sous licence SIL Open Font License, servies par le site lui-même.
+- Les noms et logos des moyens de paiement appartiennent à leurs titulaires respectifs.
+
+## Données personnelles et cookies
+
+Le site ne dépose aucun cookie. Pour savoir quelles données nous recevons quand vous demandez un rendez-vous, à qui elles sont transmises et comment exercer vos droits, lisez notre [politique de confidentialité](/confidentialite).
