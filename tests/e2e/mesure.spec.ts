@@ -89,6 +89,18 @@ test.describe("événements", () => {
   });
 });
 
+test.describe("provenance des visites", () => {
+  test("QR code du garage : /garage ouvre la réservation avec le code GARAGE et la source", async ({ page, request }) => {
+    const redirection = await request.get("/garage", { maxRedirects: 0 });
+    expect(redirection.status()).toBe(307);
+    expect(redirection.headers().location).toBe("/reserver?code=GARAGE&utm_source=garage&utm_medium=qr");
+    await page.goto("/garage");
+    await expect(page).toHaveURL(/\/reserver\?code=GARAGE&utm_source=garage&utm_medium=qr$/);
+    // Le code est appliqué à l'estimation ; la source part avec la demande (voir reservation.spec.ts).
+    await expect(page.getByText(/code GARAGE/i).first()).toBeAttached();
+  });
+});
+
 test.describe("script Umami", () => {
   test.skip(!ID_UMAMI, "NEXT_PUBLIC_UMAMI_WEBSITE_ID non défini : le site est construit sans mesure d'audience");
 

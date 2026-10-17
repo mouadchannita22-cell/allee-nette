@@ -91,6 +91,16 @@ test.describe("réservation (partie 9 du brief)", () => {
       };
     });
 
+    // Copie du champ « donnees » envoyé (le corps multipart n'est pas lisible depuis la requête).
+    await page.addInitScript(() => {
+      const envoyer = window.fetch.bind(window);
+      window.fetch = (entree, init) => {
+        const donnees = init?.body instanceof FormData ? init.body.get("donnees") : null;
+        if (typeof donnees === "string") (window as unknown as { __donneesEnvoyees: string }).__donneesEnvoyees = donnees;
+        return envoyer(entree, init);
+      };
+    });
+
     await page.goto("/reserver?utm_source=affiche&utm_medium=papier");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Réservez votre nettoyage/);
     await expect(page.getByRole("heading", { level: 2, name: "Votre voiture" })).toBeVisible();
@@ -170,6 +180,9 @@ test.describe("réservation (partie 9 du brief)", () => {
     await page.getByRole("button", { name: "Envoyer ma demande" }).click();
     const reponse = await envoi;
     expect(reponse.status()).toBe(200);
+    // Source de la visite (UTM de la première page) envoyée avec la demande, reprise dans l'e-mail aux associés.
+    const envoye = await page.evaluate(() => (window as unknown as { __donneesEnvoyees?: string }).__donneesEnvoyees);
+    expect(JSON.parse(envoye ?? "{}").source).toEqual({ utmSource: "affiche", utmMedium: "papier" });
     expect(reponse.headers()["cache-control"]).toContain("no-store");
     const corps = await reponse.json();
     expect(corps).toMatchObject({ ok: true, demo: true });

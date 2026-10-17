@@ -139,7 +139,7 @@ Deux endroits, complémentaires :
    avec la demande (`src/lib/source-visite.ts`).
 2. **Dans Umami** : la provenance des visites (sites d'origine) et, grâce au
    filtre décrit plus haut, les campagnes UTM. Les **codes ne partent pas** vers
-   Umami : un code de parrainage peut contenir un nom.
+   Umami : un code de parrainage est la référence de la demande du parrain.
 
 Pour suivre un support, ajoutez des paramètres UTM au lien imprimé ou partagé :
 
