@@ -1,3 +1,4 @@
+import { readdirSync } from "node:fs";
 import type { NextConfig } from "next";
 
 const enTetesSecurite = [
@@ -10,6 +11,33 @@ const enTetesSecurite = [
   },
 ];
 
+/**
+ * Pages de paiement (/paiement, /paiement/merci) : leur adresse contient la
+ * signature du lien et la référence. Jamais mises en cache, jamais
+ * transmises à un autre site par l'en-tête Referer. Posées après les en-têtes
+ * communs : la dernière valeur d'un même en-tête l'emporte.
+ */
+const enTetesPaiement = [
+  { key: "Cache-Control", value: "no-store" },
+  { key: "Referrer-Policy", value: "no-referrer" },
+  { key: "X-Robots-Tag", value: "noindex, nofollow" },
+];
+
+/**
+ * Logos officiels des moyens de paiement déposés dans public/paiement/logos/
+ * (voir le LISEZMOI.md du dossier), relevés au build : le composant
+ * LogosPaiement affiche un libellé texte pour chaque logo absent.
+ */
+function logosPaiementPresents(): string {
+  try {
+    return readdirSync("public/paiement/logos")
+      .filter((fichier) => /^[a-z-]+\.(?:svg|png|webp)$/.test(fichier))
+      .join(",");
+  } catch {
+    return "";
+  }
+}
+
 const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
@@ -19,6 +47,7 @@ const nextConfig: NextConfig = {
     // seulement au build : recopié ici pour le serveur (lib/environnement.ts).
     // Jamais de secret dans cette liste : elle est inscrite dans le code compilé.
     CONTEXTE_DEPLOIEMENT: process.env.CONTEXT ?? "",
+    LOGOS_PAIEMENT_PRESENTS: logosPaiementPresents(),
   },
   images: {
     formats: ["image/avif", "image/webp"],
@@ -32,7 +61,11 @@ const nextConfig: NextConfig = {
     },
   },
   async headers() {
-    return [{ source: "/:chemin*", headers: enTetesSecurite }];
+    return [
+      { source: "/:chemin*", headers: enTetesSecurite },
+      { source: "/paiement", headers: enTetesPaiement },
+      { source: "/paiement/merci", headers: enTetesPaiement },
+    ];
   },
   async redirects() {
     // URL courte du QR code du garage partenaire (partie 14 du brief).
