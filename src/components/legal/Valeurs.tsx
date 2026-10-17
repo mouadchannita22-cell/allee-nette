@@ -84,6 +84,23 @@ export function IdentiteAssocie({ lettre }: { lettre: Encaisseur }) {
   );
 }
 
+/** Nom, adresse et e-mail de chaque associé, en liste (rétractation, exercice des droits). */
+export function CoordonneesAssocies() {
+  return (
+    <ul className={CLASSES_TEXTE.ul}>
+      {LETTRES.map((lettre) => {
+        const a = site.associes[lettre];
+        return (
+          <li key={lettre} className={CLASSES_TEXTE.li}>
+            <NomAssocie lettre={lettre} />, <ACompleter valeur={a.adresse} libelle={`adresse de l'associé ${lettre}`} />,{" "}
+            <Email adresse={a.email} libelle={`e-mail de l'associé ${lettre}`} />
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
 /** Les deux associés, l'un après l'autre. */
 export function Associes() {
   return (
@@ -138,7 +155,7 @@ export function Hebergeur() {
   return (
     <dl className={CLASSES_TEXTE.dl}>
       <Ligne terme="Raison sociale">
-        <ACompleter valeur={h.raisonSociale} libelle="raison sociale de l'hébergeur" />
+        <NomHebergeur />
       </Ligne>
       <Ligne terme="Adresse">
         <ACompleter valeur={h.adresse} libelle="adresse de l'hébergeur" />
@@ -148,6 +165,11 @@ export function Hebergeur() {
       </Ligne>
     </dl>
   );
+}
+
+/** Raison sociale de l'hébergeur, en ligne (ou emplacement). */
+export function NomHebergeur() {
+  return <ACompleter valeur={site.hebergeur.raisonSociale} libelle="raison sociale de l'hébergeur" />;
 }
 
 /** Nom du médiateur de la consommation, en ligne (ou emplacement). */

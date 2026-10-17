@@ -69,3 +69,31 @@ export const DELAI_RETRACTATION_JOURS = 14;
 
 /** Délai maximal de remboursement après une rétractation, en jours. */
 export const DELAI_REMBOURSEMENT_JOURS = 14;
+
+// ---------------------------------------------------------------------------
+// Politique de confidentialité (/confidentialite)
+// ---------------------------------------------------------------------------
+
+/** Durées de conservation, en années. */
+export const CONSERVATION = {
+  /** Demandes, échanges et photos : à compter du dernier contact. */
+  apresDernierContactAnnees: 3,
+  /** Pièces comptables (factures) : durée légale. */
+  piecesComptablesAnnees: 10,
+} as const;
+
+/**
+ * Prestataires techniques réellement utilisés par le site, cités dans la
+ * politique de confidentialité. L'hébergeur est dans config/site.ts.
+ * Changer de prestataire dans le code impose de changer cette liste.
+ */
+export const PRESTATAIRES = {
+  /** E-mails de demande et de paiement (lib/reservation/envoi.ts, lib/encaissement/envoi.ts). */
+  emails: "Resend",
+  /** Paiement en ligne : Stripe Checkout (lib/encaissement/stripe.ts). */
+  paiement: "Stripe",
+  /** Paiement de secours, seulement après un clic (components/paiement/PaiementPayPal.tsx). */
+  paypal: "PayPal",
+  /** Mesure d'audience sans cookie (lib/analytics.ts). */
+  audience: "Umami",
+} as const;

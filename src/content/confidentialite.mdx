@@ -1,0 +1,133 @@
+import { site } from "@/config/site";
+import { CONSERVATION, PRESTATAIRES } from "@/data/legal";
+import { COMPRESSION_PHOTOS, PHOTOS_DEMANDEES } from "@/data/reservation";
+import { DEBIT_PRODUCTION } from "@/lib/reservation/anti-spam";
+import { ContactSite, CoordonneesAssocies, NomHebergeur, NomsAssocies } from "@/components/legal/Valeurs";
+import { Tableau } from "@/components/legal/Tableau";
+import { ACompleter, AConfirmer } from "@/components/ui/ACompleter";
+
+{/*
+  Politique de confidentialité (/confidentialite).
+  Elle décrit le fonctionnement réel du site : si le code change (nouveau
+  prestataire, nouvelle donnée, stockage), ce texte doit changer aussi.
+  Associés, hébergeur et contacts viennent de src/config/site.ts ; durées et
+  prestataires de src/data/legal.ts. Après une modification du texte, changez
+  la date dans src/data/legal.ts (MISES_A_JOUR).
+*/}
+
+## En bref
+
+- Le site ne dépose **aucun cookie** et n'affiche aucun contenu d'un autre site : aucun bandeau à accepter.
+- Votre demande de rendez-vous nous parvient **par e-mail** : elle n'est enregistrée dans aucune base de données.
+- **Aucune donnée bancaire** ne passe par nous : {PRESTATAIRES.paiement} ou {PRESTATAIRES.paypal} la traitent.
+- Nous n'utilisons vos données que pour votre prestation et, si vous l'acceptez, pour vous envoyer nos offres. Nous ne les vendons à personne.
+
+## Qui est responsable de vos données
+
+{site.nom} est le nom commercial de deux entrepreneurs individuels, <NomsAssocies />. Ils décident ensemble de l'usage des données reçues par le site : ils en sont **responsables conjoints**. Vous pouvez vous adresser à l'un ou à l'autre :
+
+<CoordonneesAssocies />
+
+Répartition de leurs obligations de responsables conjoints : <AConfirmer libelle="accord écrit entre les deux associés, dont l'essentiel doit vous être communiqué" />.
+
+Pour toute question sur vos données, vous pouvez aussi utiliser nos contacts communs :
+
+<ContactSite />
+
+## Les données que nous recevons
+
+### Quand vous demandez un rendez-vous
+
+- vos coordonnées : prénom, téléphone, e-mail ;
+- l'adresse d'intervention : rue, commune, type d'emplacement, présence d'une prise électrique ;
+- votre véhicule : modèle, gabarit, état, poils d'animaux, sièges enfants, formule et options choisies ;
+- vos photos, si vous en joignez : {PHOTOS_DEMANDEES.map((p) => p.libelle.toLowerCase()).join(", ")} ;
+- les créneaux souhaités et votre préférence de paiement (en ligne ou sur place) ;
+- si vous les indiquez : comment vous nous avez connus et votre code (par exemple un code de parrainage) ;
+- la source de votre visite : les paramètres de campagne du lien suivi (« utm »), le code éventuel de ce lien et le nom du site d'où vous venez ;
+- vos accords : conditions générales de vente, exécution avant la fin du délai de rétractation, traitement de vos données et, si vous la cochez, réception de nos offres.
+
+### Quand vous nous écrivez ou nous appelez
+
+Le contenu de vos messages et les photos que vous nous envoyez. Si vous nous écrivez sur WhatsApp ou par SMS, vos messages passent aussi par ces services, selon leurs propres règles.
+
+### Paiement en ligne
+
+Le lien de paiement que nous vous envoyons contient seulement la référence de votre demande, le montant, le libellé de la prestation et l'entrepreneur qui encaisse. Il est signé : toute modification le rend invalide.
+
+- **Avec {PRESTATAIRES.paiement}** : en cliquant sur le bouton de paiement, vous quittez notre site pour la page sécurisée de {PRESTATAIRES.paiement}. Vous y saisissez les informations qu'il vous demande (données de carte, adresse e-mail…). Une fois le paiement fait, {PRESTATAIRES.paiement} prévient notre serveur, qui envoie un e-mail à l'entrepreneur concerné : référence, montant, moyen de paiement, date et identifiant du paiement. Rien d'autre.
+- **Avec {PRESTATAIRES.paypal}**, si ce bouton vous est proposé : le module {PRESTATAIRES.paypal} n'est chargé qu'après votre clic sur « Payer avec {PRESTATAIRES.paypal} ». Vous vous connectez alors à votre compte {PRESTATAIRES.paypal} ; notre serveur crée et encaisse la commande au montant du lien, et l'entrepreneur reçoit le même e-mail.
+
+### Ce que nous ne recevons jamais
+
+- vos données bancaires (numéro de carte, identifiants {PRESTATAIRES.paypal}) : seuls {PRESTATAIRES.paiement} et {PRESTATAIRES.paypal} les traitent ;
+- la position GPS de vos photos : elle est retirée avant l'envoi (voir ci-dessous) ;
+- de données de navigation par cookie : le site n'en dépose aucun.
+
+## Comment fonctionne le site
+
+- **Aucune base de données.** Quand vous envoyez votre demande, notre serveur la vérifie puis l'envoie par e-mail aux deux associés, photos en pièces jointes, et vous envoie un accusé de réception. La demande n'est pas conservée sur le serveur.
+- **Un seul compteur.** Pour numéroter les demandes (AN-2026-0142, par exemple), le serveur garde un compteur : un nombre par année, sans aucune donnée personnelle.
+- **Photos allégées dans votre navigateur.** Avant l'envoi, chaque photo est réduite (environ {COMPRESSION_PHOTOS.coteMaxPx.toLocaleString("fr-FR")} pixels de côté, moins de {COMPRESSION_PHOTOS.poidsMaxOctets / 1024} Ko) et réenregistrée : ses métadonnées (EXIF), dont la position GPS, disparaissent.
+- **Source de la visite en mémoire seulement.** Les paramètres du lien suivi sont gardés dans la mémoire de la page pendant votre visite, sans cookie ni stockage, et ne partent qu'avec une demande.
+- **Anti-spam sans traceur.** Pour freiner les envois automatiques, le serveur compte les demandes par adresse IP, en mémoire, pendant {DEBIT_PRODUCTION.fenetreMs / 60_000} minutes au plus, sans jamais l'écrire.
+- **Journaux.** Les journaux de notre code ne contiennent ni vos coordonnées ni données bancaires : seulement la référence et des codes d'erreur. Comme pour tout site, l'hébergeur traite votre adresse IP pour afficher les pages. <AConfirmer libelle="données techniques conservées par l'hébergeur dans ses journaux, et leur durée" />
+
+## Pourquoi nous utilisons vos données
+
+<Tableau
+  legende="Ce que nous faisons de vos données, et la base légale de chaque usage"
+  entetes={["Ce que nous faisons", "Base légale"]}
+  lignes={[
+    ["Établir le prix, organiser le rendez-vous, réaliser la prestation, encaisser", "Exécution du contrat, ou mesures précontractuelles prises à votre demande"],
+    ["Suivre la relation : garantie Retouche, réclamations, provenance des demandes", "Intérêt légitime"],
+    ["Mesurer la fréquentation du site, sans cookie", "Intérêt légitime"],
+    ["Protéger le formulaire contre les envois automatiques", "Intérêt légitime"],
+    ["Vous envoyer nos offres par e-mail", "Votre consentement (case facultative), que vous pouvez retirer à tout moment"],
+    ["Établir et conserver les factures", "Obligation légale"],
+  ]}
+/>
+
+## Qui reçoit vos données
+
+- les deux associés, et eux seuls dans {site.nom} ;
+- notre hébergeur, <NomHebergeur />, qui fait fonctionner le site et le serveur ;
+- {PRESTATAIRES.emails}, le service qui envoie les e-mails de demande et de paiement ;
+- le fournisseur de nos boîtes e-mail, où arrivent les demandes : <ACompleter libelle="fournisseur des boîtes e-mail des associés" /> ;
+- {PRESTATAIRES.paiement}, pour le paiement en ligne ;
+- {PRESTATAIRES.paypal}, seulement si vous choisissez de payer avec {PRESTATAIRES.paypal} ;
+- {PRESTATAIRES.audience}, notre outil de mesure d'audience sans cookie (voir [Cookies et traceurs](#cookies-et-traceurs)).
+
+Notre hébergeur, {PRESTATAIRES.emails} et {PRESTATAIRES.audience} n'utilisent vos données que pour le service qu'ils nous rendent. {PRESTATAIRES.paiement} et {PRESTATAIRES.paypal} traitent les données de paiement selon leurs propres politiques de confidentialité, notamment pour lutter contre la fraude et respecter leurs obligations légales. Nous ne transmettons rien à des annonceurs.
+
+**Transferts hors de l'Union européenne.** <ACompleter libelle="vérifier pour chaque prestataire le pays d'hébergement et le mécanisme d'encadrement des transferts" />
+
+## Combien de temps nous les gardons
+
+- **Demandes, échanges et photos** : {CONSERVATION.apresDernierContactAnnees} ans après notre dernier contact, puis supprimés de nos boîtes e-mail et de nos téléphones.
+- **Factures et pièces comptables** : {CONSERVATION.piecesComptablesAnnees} ans, comme la loi l'impose.
+- **Accord pour recevoir nos offres** : jusqu'à ce que vous le retiriez, et au plus {CONSERVATION.apresDernierContactAnnees} ans après notre dernier contact.
+- **Photos de votre véhicule** : elles servent à établir le prix et l'état des lieux. Nous ne publions une photo qu'avec votre accord écrit, plaque d'immatriculation floutée.
+
+## Vos droits
+
+Vous pouvez à tout moment demander l'accès à vos données, leur rectification, leur effacement, leur portabilité ou la limitation de leur usage, vous opposer à leur utilisation, retirer votre consentement, et définir des directives sur leur sort après votre décès.
+
+Écrivez à l'un des associés ou à notre adresse commune (coordonnées ci-dessus). Nous vous répondons dans un délai d'un mois. Nous pouvons vous demander de justifier votre identité si nous avons un doute raisonnable.
+
+Si vous estimez que vos droits ne sont pas respectés, vous pouvez adresser une réclamation à la CNIL : [www.cnil.fr](https://www.cnil.fr).
+
+## Cookies et traceurs
+
+- **Aucun cookie déposé par le site**, ni pour la mesure d'audience, ni pour la publicité.
+- **Mesure d'audience sans cookie.** {PRESTATAIRES.audience} compte les pages vues, le site d'où vous venez, le type d'appareil et de navigateur, et quelques étapes du parcours : utilisation du calculateur, étapes de la réservation, envoi d'une demande, clic vers le téléphone ou WhatsApp, début et réussite d'un paiement. Ces événements ne contiennent ni votre nom, ni vos coordonnées, ni votre référence. <AConfirmer libelle="données techniques collectées par l'offre Umami retenue et leur durée de conservation" />
+- **Aucun contenu tiers intégré** : la carte des zones est une image dessinée par le site, et les polices de caractères sont servies par le site lui-même.
+- **Mémoire de votre navigateur.** Le site y garde deux informations techniques, sans vos coordonnées : votre réglage du curseur animé, si vous le changez en bas de page, et, sur la page de confirmation d'un paiement, l'identifiant de ce paiement, pour ne le compter qu'une fois dans la mesure d'audience. <AConfirmer libelle="ces deux stockages relèvent bien des exceptions au consentement" />
+- **{PRESTATAIRES.paypal}** peut déposer ses propres cookies, selon ses propres règles, mais seulement si vous cliquez sur « Payer avec {PRESTATAIRES.paypal} » sur la page de paiement. Avant ce clic, aucun script ni cookie {PRESTATAIRES.paypal}.
+- **{PRESTATAIRES.paiement}** applique ses propres règles sur sa page de paiement, une fois que vous avez quitté notre site.
+
+C'est pourquoi le site n'affiche aucun bandeau de cookies. Si nous ajoutions un jour un service qui en dépose, nous vous demanderions votre choix, « Accepter » ou « Refuser », aussi simple l'un que l'autre.
+
+## Sécurité
+
+Le site est servi uniquement en HTTPS. Les clés de nos prestataires restent sur le serveur, jamais dans votre navigateur. Les liens de paiement sont signés et expirent. L'outil interne qui crée ces liens est protégé par mot de passe et ne contient aucune donnée client.

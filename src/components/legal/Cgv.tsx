@@ -1,4 +1,4 @@
-import { site, zoneActive, type Encaisseur } from "@/config/site";
+import { site, zoneActive } from "@/config/site";
 import { EMPLACEMENTS, PAIEMENT_SUR_PLACE } from "@/data/conditions";
 import { ANNEXE_CGV, ARTICLES_CGV, type IdArticleCgv } from "@/data/legal";
 import { DEPLACEMENT, FORMULES, GABARITS, GARANTIE, OPTIONS, formule, option, type OptionId, type OptionTarif } from "@/data/offres";
@@ -6,9 +6,9 @@ import { DETAILS_PAIEMENT_SUR_PLACE } from "@/data/paiement";
 import { MODES_PAIEMENT, PAIEMENT_EN_LIGNE, PHOTOS_DEMANDEES, TEXTE_EXECUTION_ANTICIPEE, type ModePaiement } from "@/data/reservation";
 import { euros, initialeMinuscule } from "@/lib/texte";
 import { fr } from "@/lib/typo";
-import { ACompleter, AConfirmer } from "@/components/ui/ACompleter";
+import { AConfirmer } from "@/components/ui/ACompleter";
 import { CLASSES_TEXTE } from "./classes";
-import { Email, NomAssocie } from "./Valeurs";
+import { CoordonneesAssocies } from "./Valeurs";
 
 /**
  * Composants des conditions générales de vente (src/content/cgv.mdx) :
@@ -16,8 +16,6 @@ import { Email, NomAssocie } from "./Valeurs";
  * garantie, paiement, rétractation). Changer une valeur dans data/*.ts ou
  * config/site.ts la change dans les CGV.
  */
-
-const LETTRES: readonly Encaisseur[] = ["A", "B"];
 
 const SURTITRE = "block font-sans text-sm font-semibold uppercase tracking-[0.14em] text-accent";
 
@@ -276,23 +274,6 @@ export function TexteExecutionAnticipee() {
   );
 }
 
-/** À qui adresser une rétractation : l'entrepreneur qui réalise la prestation (nom, adresse, e-mail). */
-export function DestinatairesRetractation() {
-  return (
-    <ul className={CLASSES_TEXTE.ul}>
-      {LETTRES.map((lettre) => {
-        const a = site.associes[lettre];
-        return (
-          <li key={lettre} className={CLASSES_TEXTE.li}>
-            <NomAssocie lettre={lettre} />, <ACompleter valeur={a.adresse} libelle={`adresse de l'associé ${lettre}`} />,{" "}
-            <Email adresse={a.email} libelle={`e-mail de l'associé ${lettre}`} />
-          </li>
-        );
-      })}
-    </ul>
-  );
-}
-
 /** Garantie Retouche : promesse, limites et exclusions (GARANTIE, data/offres.ts). */
 export function Garantie() {
   return (
@@ -352,7 +333,7 @@ export function FormulaireRetractation() {
           "À l'attention de l'entrepreneur individuel qui réalise votre prestation (son nom figure sur la confirmation de votre rendez-vous et sur votre facture) :",
         )}
       </p>
-      <DestinatairesRetractation />
+      <CoordonneesAssocies />
       <p className="mt-4">
         {fr(
           "Je/nous (*) vous notifie/notifions (*) par la présente ma/notre (*) rétractation du contrat portant sur la prestation de services ci-dessous :",

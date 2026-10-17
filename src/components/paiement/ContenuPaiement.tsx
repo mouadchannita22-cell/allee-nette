@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { connection } from "next/server";
 import { site } from "@/config/site";
 import {
@@ -29,6 +30,8 @@ import { PayerSurPlace } from "./PayerSurPlace";
 export type ParametresPage = Record<string, string | string[] | undefined>;
 
 const ID_TITRE = "titre-paiement-contenu";
+
+const CLASSE_LIEN = "font-semibold text-accent underline underline-offset-4 hover:no-underline";
 
 /**
  * Contenu de la page /paiement, rendu côté serveur : le lien est vérifié
@@ -225,6 +228,17 @@ function PaiementPropose({ lien }: { lien: LienPaiement }) {
         <div className="mt-6">
           <ZonePaiement lien={lien} />
         </div>
+        <p className="mt-6 border-t border-bord pt-4 text-sm text-doux">
+          Le paiement suit nos{" "}
+          <Link href="/cgv#paiement" className={CLASSE_LIEN}>
+            conditions générales de vente
+          </Link>
+          . Vos données :{" "}
+          <Link href="/confidentialite#paiement-en-ligne" className={CLASSE_LIEN}>
+            politique de confidentialité
+          </Link>
+          .
+        </p>
       </section>
 
       <div className="space-y-6">
