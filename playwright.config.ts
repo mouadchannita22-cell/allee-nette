@@ -1,4 +1,5 @@
 import { defineConfig } from "@playwright/test";
+import { ENVIRONNEMENT_PAIEMENT_E2E } from "./tests/e2e/environnement";
 
 /**
  * Tests de bout en bout (Playwright) : `npm run build`, puis `npx playwright test`.
@@ -11,6 +12,10 @@ import { defineConfig } from "@playwright/test";
  * - RESERVATION_LIMITE_DEBIT relève la limite de 5 demandes par 10 minutes,
  *   pour que les parcours répétés ne soient pas refusés. Ce réglage est
  *   ignoré en production (lib/reservation/anti-spam.ts).
+ * - Paiement : valeurs de test (tests/e2e/environnement.ts) pour
+ *   PAYMENT_LINK_SECRET, ADMIN_PASSWORD, Stripe et PayPal. Aucune vraie clé :
+ *   les requêtes du navigateur vers Stripe et PayPal sont interceptées, celles
+ *   du serveur échouent (clés factices). Aucun paiement réel n'est possible.
  * - Chromium : CHROMIUM_PATH, sinon le navigateur installé dans le conteneur
  *   de développement.
  * - Sorties dans test-results/ et playwright-report/, ignorés par git.
@@ -48,6 +53,6 @@ export default defineConfig({
     url: `http://localhost:${PORT}/`,
     reuseExistingServer: true,
     timeout: 60_000,
-    env: { RESERVATION_LIMITE_DEBIT: "1000", RESEND_API_KEY: "" },
+    env: { RESERVATION_LIMITE_DEBIT: "1000", RESEND_API_KEY: "", ...ENVIRONNEMENT_PAIEMENT_E2E },
   },
 });

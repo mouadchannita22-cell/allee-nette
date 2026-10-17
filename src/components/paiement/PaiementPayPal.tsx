@@ -126,7 +126,7 @@ export function PaiementPayPal({ lien, clientId, environnement, separe = true }:
           {sdk === "chargement" ? "Chargement de PayPal…" : "Payer avec PayPal"}
         </Bouton>
       )}
-      <div id={ID_BOUTONS} ref={conteneur} tabIndex={-1} aria-label="Paiement PayPal" className="mt-3 outline-none" />
+      <div id={ID_BOUTONS} ref={conteneur} tabIndex={-1} role="group" aria-label="Paiement PayPal" className="mt-3 outline-none" />
       <p className="mt-2 text-xs text-doux">
         PayPal ne se charge que si vous cliquez : aucun script ni cookie PayPal avant.
       </p>
