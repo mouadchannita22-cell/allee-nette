@@ -108,7 +108,11 @@ function SansPaiement({ situation, reference }: { situation: SituationLien; refe
             {fr(titre)}
           </h2>
           <p className="mt-3">{fr(texte)}</p>
-          {reference && <p className="mt-3 text-sm text-doux">Référence indiquée dans le lien : {reference}</p>}
+          {reference && (
+            <p className="mt-3 text-sm text-doux">
+              Référence indiquée dans le lien : <span className="whitespace-nowrap">{reference}</span>
+            </p>
+          )}
         </section>
         <Contacts titre="Nous contacter" message={messageContact(situation, reference)} />
       </div>
