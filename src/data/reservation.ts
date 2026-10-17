@@ -6,6 +6,7 @@
  * d'intervention de `data/conditions.ts` : rien n'est recopié ici.
  */
 import { CONDITIONS, EMPLACEMENTS, PAIEMENT_SUR_PLACE } from "./conditions";
+import { DELAI_RETRACTATION_JOURS } from "./legal";
 import { option, type OptionId } from "./offres";
 
 // ---------------------------------------------------------------------------
@@ -182,9 +183,11 @@ export const RAPPEL_PAIEMENT =
 // Étape 7 : validation
 // ---------------------------------------------------------------------------
 
-/** Texte exact de la partie 9.1, point 7. */
-export const TEXTE_EXECUTION_ANTICIPEE =
-  "Je demande que la prestation soit réalisée avant la fin du délai de rétractation de 14 jours, et je reconnais perdre mon droit de rétractation une fois la prestation entièrement exécutée.";
+/**
+ * Texte exact de la partie 9.1, point 7. Cité tel quel dans l'article
+ * « Droit de rétractation » des CGV (src/content/cgv.mdx) : une seule source.
+ */
+export const TEXTE_EXECUTION_ANTICIPEE = `Je demande que la prestation soit réalisée avant la fin du délai de rétractation de ${DELAI_RETRACTATION_JOURS} jours, et je reconnais perdre mon droit de rétractation une fois la prestation entièrement exécutée.`;
 
 type Libelle = { avant: string; lien?: { href: string; texte: string }; apres?: string };
 

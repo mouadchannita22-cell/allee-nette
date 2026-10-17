@@ -23,7 +23,7 @@ export function Ligne({ terme, children }: { terme: string; children: ReactNode 
 }
 
 /** Lien `mailto:` vers une adresse, ou emplacement si elle manque. */
-function Email({ adresse, libelle }: { adresse: string; libelle: string }) {
+export function Email({ adresse, libelle }: { adresse: string; libelle: string }) {
   if (!estRenseigne(adresse)) return <ACompleter libelle={libelle} />;
   return (
     <a href={`mailto:${adresse}`} className={CLASSES_TEXTE.lien}>
@@ -192,5 +192,16 @@ export function Assurance() {
         <ACompleter valeur={a.numeroContrat} libelle="numéro de contrat" />
       </Ligne>
     </dl>
+  );
+}
+
+/** Assurance en une ligne : « assureur, contrat n° … ». */
+export function AssuranceEnLigne() {
+  const a = site.assurance;
+  return (
+    <>
+      <ACompleter valeur={a.assureur} libelle="assureur" />, contrat n°{" "}
+      <ACompleter valeur={a.numeroContrat} libelle="numéro de contrat" />
+    </>
   );
 }
