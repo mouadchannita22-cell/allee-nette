@@ -11,7 +11,7 @@ Le cahier des charges complet est dans [`docs/brief.md`](docs/brief.md), le plan
 | --- | --- |
 | 1 à 5 — socle, données et calculateur, pages, effets visuels | Fait (`main`) |
 | 6 — réservation en 7 étapes, e-mails, référence AN-AAAA-NNNN | Fait (`main`), testée ; relecture croisée à terminer |
-| 7 — paiement en ligne (Stripe en mode test, PayPal en secours) | **À faire** — spécification prête : [`docs/specs/etape-7-paiement.md`](docs/specs/etape-7-paiement.md) |
+| 7 — paiement en ligne (Stripe en mode test, PayPal en secours) | Fait (branche `etape-7/paiement`), testé avec Stripe et PayPal simulés ; mise en route : [`docs/paiement.md`](docs/paiement.md) |
 | 8 — pages légales (mentions, CGV, confidentialité) et mesure d'audience Umami | **À faire** — spécification prête : [`docs/specs/etape-8-legal-et-mesure.md`](docs/specs/etape-8-legal-et-mesure.md) |
 | 9 — recette complète (Lighthouse, accessibilité, captures) | À faire |
 | 10 — déploiement | `netlify.toml` prêt ; mise en ligne à faire (voir plus bas) |
@@ -74,7 +74,7 @@ Tant que `INDEXATION` ne vaut pas `oui`, le site en ligne indique aux moteurs de
 
 ## Reste à faire
 
-1. **Étape 7 — paiement** : liens de paiement signés, page `/paiement`, page d'administration, Stripe Checkout pour les deux encaisseurs, webhooks, PayPal en secours. Il vous faudra deux comptes Stripe (un par associé), en **mode test** d'abord, avec des **clés restreintes** saisies uniquement dans Netlify. Vérifiez les frais de chaque solution : le modèle financier compte 1 %.
+1. **Paiement en ligne** : créer les deux comptes Stripe (un par associé), en **mode test** d'abord, avec des **clés restreintes** saisies uniquement dans Netlify, puis déclarer les deux webhooks : tout est expliqué pas à pas dans [`docs/paiement.md`](docs/paiement.md). Aucun vrai paiement n'a pu être essayé pendant le développement : faites les essais de ce guide. Vérifiez les frais de chaque solution : le modèle financier compte 1 %.
 2. **Étape 8 — pages légales et mesure d'audience** : à faire relire par un professionnel ; il faut aussi adhérer à un médiateur de la consommation (obligatoire, souvent payant).
 3. **Étape 9 — recette** : objectif Lighthouse mobile ≥ 90 ; le LCP simulé de l'accueil (2,8 s) est à ramener sous 2,5 s (voir [`docs/performances.md`](docs/performances.md)). Test du héros 3D sur un vrai téléphone.
 4. Logos officiels des moyens de paiement à télécharger sur les sites des émetteurs (ne pas les redessiner).
