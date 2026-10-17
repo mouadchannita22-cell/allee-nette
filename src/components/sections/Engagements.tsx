@@ -30,7 +30,7 @@ export function Garantie() {
             ))}
             <li>
               • Exclusions et conditions détaillées dans nos{" "}
-              <Link href="/cgv" className="font-semibold text-accent underline-offset-4 hover:underline">
+              <Link href="/cgv#garantie-retouche" className="font-semibold text-accent underline-offset-4 hover:underline">
                 conditions générales de vente
               </Link>
               .

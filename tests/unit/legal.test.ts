@@ -1,4 +1,5 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { createElement, type ComponentType } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
@@ -54,6 +55,12 @@ const lisible = (phrase: string) => texte(fr(phrase));
 const ids = (html: string) => [...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1] ?? "");
 const liens = (html: string) => [...html.matchAll(/\shref="([^"]+)"/g)].map((m) => m[1] ?? "");
 const emplacement = (libelle: string) => `[À COMPLÉTER : ${libelle}]`;
+
+/** Fichiers .ts, .tsx et .mdx d'un dossier, récursivement. */
+const fichiersSource = (dossier: string): string[] =>
+  readdirSync(dossier, { recursive: true, encoding: "utf8" })
+    .filter((f) => /\.(?:tsx?|mdx)$/.test(f))
+    .map((f) => join(dossier, f));
 
 const PAGES = {
   "/mentions-legales": { html: rendre(PageMentions), meta: metaMentions },
@@ -186,9 +193,12 @@ describe("CGV : articles, sommaire et ancres", () => {
   it("tous les liens vers une ancre des pages légales aboutissent", () => {
     const sources = [
       ...Object.entries(PAGES).flatMap(([chemin, { html }]) => liens(html).map((href) => ({ chemin, href }))),
-      // Liens de la page de paiement vers les CGV et la confidentialité.
-      ...liens(readFileSync("src/components/paiement/ContenuPaiement.tsx", "utf8").replace(/href=\{?"/g, ' href="')).map(
-        (href) => ({ chemin: "/paiement", href }),
+      // Liens écrits dans le code du site (page de paiement, accueil, textes MDX…).
+      ...fichiersSource("src").flatMap((fichier) =>
+        [...readFileSync(fichier, "utf8").matchAll(/\/(?:mentions-legales|cgv|confidentialite)#[\w-]+/g)].map((m) => ({
+          chemin: fichier,
+          href: m[0],
+        })),
       ),
     ];
     const verifies = sources.filter(({ href }) => href.includes("#"));
