@@ -1,4 +1,5 @@
-import { estRenseigne, site } from "@/config/site";
+import { estRenseigne, ouACompleter, site } from "@/config/site";
+import { formaterTelephone } from "@/lib/telephone";
 
 /** Lien `tel:` au format international, ou `null` si le numéro n'est pas renseigné. */
 export function lienTelephone(): string | null {
@@ -23,4 +24,12 @@ export function lienWhatsAppPhotos(reference: string): string | null {
 /** Lien `mailto:`, ou `null` si l'adresse n'est pas renseignée. */
 export function lienEmail(): string | null {
   return estRenseigne(site.email) ? `mailto:${site.email}` : null;
+}
+
+/** Nos coordonnées en une phrase, pour les messages d'erreur : jamais une demande sans issue. */
+export function phraseContacts(): string {
+  const whatsapp = estRenseigne(site.whatsapp)
+    ? formaterTelephone(`+${site.whatsapp.replace(/\D/g, "")}`)
+    : ouACompleter(site.whatsapp, "numéro WhatsApp");
+  return `Appelez-nous (${ouACompleter(site.telephone, "téléphone")}) ou écrivez-nous sur WhatsApp (${whatsapp}).`;
 }
