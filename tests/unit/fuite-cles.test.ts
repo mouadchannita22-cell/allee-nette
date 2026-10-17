@@ -97,7 +97,7 @@ describe("aucune clé dans le dépôt", () => {
 });
 
 describe("aucune variable secrète publique", () => {
-  it("seule l'adresse du site porte le préfixe NEXT_PUBLIC_ (envoyé aux navigateurs)", (contexte) => {
+  it("seules l'adresse du site et les identifiants publics d'Umami portent le préfixe NEXT_PUBLIC_ (envoyé aux navigateurs)", (contexte) => {
     const fichiers = fichiersDuDepot();
     if (fichiers === null) {
       contexte.skip("git indisponible : vérification impossible ici");
@@ -108,6 +108,6 @@ describe("aucune variable secrète publique", () => {
       const texte = lireTexte(fichier);
       for (const m of texte?.matchAll(/NEXT_PUBLIC_[A-Z0-9_]+/g) ?? []) noms.add(m[0]);
     }
-    expect([...noms]).toEqual(["NEXT_PUBLIC_SITE_URL"]);
+    expect([...noms].sort()).toEqual(["NEXT_PUBLIC_SITE_URL", "NEXT_PUBLIC_UMAMI_SRC", "NEXT_PUBLIC_UMAMI_WEBSITE_ID"]);
   });
 });

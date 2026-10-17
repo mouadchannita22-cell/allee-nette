@@ -13,7 +13,7 @@ export function VerificateurCommune({ onCommune }: { onCommune?: (commune: Commu
       libelle="Êtes-vous dans notre zone ?"
       valeur={etat}
       onChange={(e) => {
-        if (!etat.saisie) suivre("calculateur_utilise", { source: "zones" });
+        if (!etat.saisie) suivre("calculateur_utilise", { outil: "zones" });
         setEtat(e);
         onCommune?.(e.commune);
       }}
