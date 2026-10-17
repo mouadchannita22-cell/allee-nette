@@ -95,3 +95,19 @@ describe("aucune clé dans le dépôt", () => {
     expect(fuites, "Clé ou secret trouvé : retirez-le, puis révoquez-le dans le tableau de bord Stripe").toEqual([]);
   });
 });
+
+describe("aucune variable secrète publique", () => {
+  it("seule l'adresse du site porte le préfixe NEXT_PUBLIC_ (envoyé aux navigateurs)", (contexte) => {
+    const fichiers = fichiersDuDepot();
+    if (fichiers === null) {
+      contexte.skip("git indisponible : vérification impossible ici");
+      return;
+    }
+    const noms = new Set<string>();
+    for (const fichier of fichiers.filter((f) => /^(?:src\/|next\.config\.ts$|\.env\.example$|netlify\.toml$)/.test(f))) {
+      const texte = lireTexte(fichier);
+      for (const m of texte?.matchAll(/NEXT_PUBLIC_[A-Z0-9_]+/g) ?? []) noms.add(m[0]);
+    }
+    expect([...noms]).toEqual(["NEXT_PUBLIC_SITE_URL"]);
+  });
+});
