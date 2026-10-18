@@ -5,6 +5,8 @@ Next.js 16 (App Router), TypeScript, Tailwind CSS. Hébergement prévu : Netlify
 
 Le cahier des charges complet est dans [`docs/brief.md`](docs/brief.md), le plan validé dans [`docs/PLAN.md`](docs/PLAN.md).
 
+Site déployé sur Netlify : https://sensational-naiad-1eb7fc.netlify.app (projet privé pour l'instant : connectez-vous à Netlify pour le voir ; bouton « Make public » le jour du lancement).
+
 ## Où en est le site
 
 | Étape | État |
