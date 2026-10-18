@@ -8,7 +8,9 @@ import { LiensContact } from "./LiensContact";
  */
 export function ChargementReservation() {
   return (
-    <div>
+    // Hauteur réservée proche de celle du formulaire (étape 1), mesurée à 412, 768 et 1280 px :
+    // sans elle, le pied de page remonte puis redescend à l'arrivée du formulaire (CLS 0,41).
+    <div className="min-h-[118rem] md:min-h-[100rem] lg:min-h-[68rem] [@media(scripting:none)]:min-h-0">
       <p
         role="status"
         className="rounded-carte border border-bord-champ bg-blanc p-6 text-doux [@media(scripting:none)]:hidden"

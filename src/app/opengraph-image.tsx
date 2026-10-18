@@ -34,7 +34,6 @@ export default async function ImagePartage() {
             "radial-gradient(900px 520px at 85% 15%, rgba(46,230,214,0.28), transparent 60%), radial-gradient(700px 420px at 0% 100%, #0F2A4A, transparent 70%)",
         }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={logoDataUri} alt="" width={420} height={62} />
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ fontFamily: "Unbounded", fontSize: 68, lineHeight: 1.05, maxWidth: 980 }}>{site.promesse}</div>

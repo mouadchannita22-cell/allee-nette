@@ -38,7 +38,9 @@ export default function PagePaiement({ searchParams }: PageProps<"/paiement">) {
         <div className="conteneur">
           <Suspense
             fallback={
-              <p role="status" className="text-doux">
+              // Hauteur réservée proche de celle du contenu (mesurée à 412, 768 et 1280 px) :
+              // sans elle, le pied de page bouge à l'arrivée du contenu (CLS 0,5).
+              <p role="status" className="min-h-[56rem] text-doux md:min-h-[42rem] lg:min-h-[25rem]">
                 Vérification du lien de paiement…
               </p>
             }
