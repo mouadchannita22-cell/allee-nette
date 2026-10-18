@@ -10,11 +10,11 @@ Le cahier des charges complet est dans [`docs/brief.md`](docs/brief.md), le plan
 | Étape | État |
 | --- | --- |
 | 1 à 5 — socle, données et calculateur, pages, effets visuels | Fait (`main`) |
-| 6 — réservation en 7 étapes, e-mails, référence AN-AAAA-NNNN | Fait (`main`), testée ; relecture croisée à terminer |
-| 7 — paiement en ligne (Stripe en mode test, PayPal en secours) | Fait (branche `etape-7/paiement`), testé avec Stripe et PayPal simulés ; mise en route : [`docs/paiement.md`](docs/paiement.md) |
-| 8 — pages légales (mentions, CGV, confidentialité) et mesure d'audience Umami | Fait (branche `etape-8/legal`), testé ; textes à faire relire par un professionnel du droit ; mesure : [`docs/mesure-audience.md`](docs/mesure-audience.md) ; ce qui manque encore : [`docs/a-completer.md`](docs/a-completer.md) |
-| 9 — recette complète (Lighthouse, accessibilité, captures) | À faire |
-| 10 — déploiement | `netlify.toml` prêt ; mise en ligne à faire (voir plus bas) |
+| 6 — réservation en 7 étapes, e-mails, référence AN-AAAA-NNNN | Fait (`main`), testée |
+| 7 — paiement en ligne (Stripe en mode test, PayPal en secours) | Fait (`main`), testé avec Stripe et PayPal simulés ; mise en route : [`docs/paiement.md`](docs/paiement.md) |
+| 8 — pages légales (mentions, CGV, confidentialité) et mesure d'audience Umami | Fait (`main`), testé ; textes à faire relire par un professionnel du droit ; mesure : [`docs/mesure-audience.md`](docs/mesure-audience.md) ; ce qui manque encore : [`docs/a-completer.md`](docs/a-completer.md) |
+| 9 — recette complète (Lighthouse, accessibilité, captures) | Fait (`main`) : 604 tests unitaires et 78 de bout en bout réussis ; Lighthouse mobile 93 à 98, accessibilité et bonnes pratiques 100, SEO 100 une fois l'indexation activée ([`docs/performances.md`](docs/performances.md), captures dans `docs/captures/etape-9/`) |
+| 10 — déploiement | `netlify.toml` prêt ; il reste à importer le dépôt dans Netlify (voir « Mettre le site en ligne ») |
 
 Les pages /mentions-legales, /cgv et /confidentialite existent, mais ce sont des projets : elles affichent encore des « [À COMPLÉTER] » et des « [À CONFIRMER] » (liste complète dans [`docs/a-completer.md`](docs/a-completer.md), `npm run a-completer` pour voir ce qui reste). **Ne lancez pas le site auprès du public avant leur relecture par un professionnel du droit** : ces pages sont obligatoires.
 

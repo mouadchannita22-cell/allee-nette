@@ -56,3 +56,25 @@ Le SEO affiche 66 hors production : les pages portent volontairement `noindex` t
 | `/?fx=degrade` | Image fixe et gouttes CSS |
 | `/?fx=reduit` | Image fixe, aucune animation (comme `prefers-reduced-motion`) |
 | `/?affiche` | Rendu déterministe utilisé par `npm run affiche` pour fabriquer l'image de repli |
+
+## Recette (étape 9, 18 octobre 2026)
+
+Lighthouse 12.6.1, profil mobile simulé, build de production. Le SEO est mesuré sur un build `CONTEXT=production INDEXATION=oui` : sans cette variable, le site reste volontairement en `noindex` (SEO à 66).
+
+| Page | Perf. | Access. | Bonnes pratiques | SEO | LCP | CLS | TBT |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Accueil (médiane de 5 mesures) | 94 | 100 | 100 | 100 | 2,4 s | 0 | 180 ms |
+| /tarifs | 94 à 98 | 100 | 100 | 100 | 2,3 à 2,6 s | 0 | 100 à 200 ms |
+| /reserver | 93 à 95 | 100 | 100 | 100 | 2,3 à 2,9 s | 0 | 170 à 210 ms |
+| /zones | 96 à 98 | 100 | 100 | — | 2,2 à 2,6 s | 0 | 100 à 130 ms |
+| /faq | 96 à 99 | 100 | 100 | — | 2,0 à 2,8 s | 0 | 50 à 80 ms |
+| /paiement | 93 à 96 | 100 | 100 | 66 (noindex voulu) | 2,3 à 3,1 s | 0 | 120 à 200 ms |
+| /cgv | 98 | 100 | 100 | — | 2,2 s | 0 | 100 ms |
+
+Corrections faites pendant la recette :
+
+- **/reserver** : décalage de mise en page de 0,41 (le pied de page remontait puis redescendait à l'arrivée du formulaire, construit dans le navigateur). L'emplacement réserve maintenant la hauteur du formulaire, mesurée à 412, 768 et 1 280 px : CLS 0.
+- **/paiement** : même défaut (0,50) pendant la vérification du lien : même correction, CLS 0.
+- Avertissement ESLint d'`opengraph-image.tsx` retiré.
+
+D'une mesure à l'autre, le LCP simulé varie de 0,5 s sur cette machine partagée. La médiane de l'accueil (2,4 s) passe sous le budget de 2,5 s, mais certaines mesures isolées le dépassent. Le héros 3D reste à vérifier sur un vrai téléphone (mode complet), voir « Limites de ces mesures ».
