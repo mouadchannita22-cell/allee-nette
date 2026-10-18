@@ -58,6 +58,13 @@ Une valeur laissée vide (`""`) dans `src/config/site.ts` s'affiche sur le site 
    | `RESERVATION_EXPEDITEUR` | par exemple `Allée Nette <reservation@votre-domaine.fr>` (domaine vérifié chez Resend) |
    | `INDEXATION` | laissez vide jusqu'au lancement, puis `oui` |
    | `NEXT_PUBLIC_UMAMI_WEBSITE_ID` | facultatif : identifiant du site dans Umami, pour la mesure d'audience sans cookie ([`docs/mesure-audience.md`](docs/mesure-audience.md)) ; vide, aucune mesure |
+   | `PAYMENT_LINK_SECRET` | secret des liens de paiement, **secret**, au moins 32 caractères (commande pour le générer dans `.env.example`) |
+   | `ADMIN_PASSWORD` | mot de passe de la page `/admin/lien-paiement`, **secret**, choisi par vous |
+   | `STRIPE_API_KEY_A`, `STRIPE_API_KEY_B` | clés Stripe (restreintes `rk_test_…` d'abord) de chaque associé, **secrètes** — voir [`docs/paiement.md`](docs/paiement.md) |
+   | `STRIPE_WEBHOOK_SECRET_A`, `STRIPE_WEBHOOK_SECRET_B` | secrets de signature des deux webhooks Stripe, **secrets** |
+   | `PAYPAL_ENABLED`, `PAYPAL_ENV`, `PAYPAL_CLIENT_ID_A`, `PAYPAL_CLIENT_ID_B`, `PAYPAL_CLIENT_SECRET_A`, `PAYPAL_CLIENT_SECRET_B` | facultatif : PayPal en secours, si PayPal n'est pas activable dans Stripe |
+
+   La liste complète, commentée, est dans [`.env.example`](.env.example). Sans clé Stripe, la page de paiement affiche « Paiement en ligne bientôt disponible » ; sans clé Resend en production, le formulaire invite à appeler ou à écrire sur WhatsApp.
 
 3. Relancez un déploiement (**Deploys → Trigger deploy**) après chaque modification de variable : les valeurs sont figées au moment du build.
 4. Testez une réservation sur votre téléphone.
@@ -79,6 +86,6 @@ Tant que `INDEXATION` ne vaut pas `oui`, le site en ligne indique aux moteurs de
 1. **Paiement en ligne** : créer les deux comptes Stripe (un par associé), en **mode test** d'abord, avec des **clés restreintes** saisies uniquement dans Netlify, puis déclarer les deux webhooks : tout est expliqué pas à pas dans [`docs/paiement.md`](docs/paiement.md). Aucun vrai paiement n'a pu être essayé pendant le développement : faites les essais de ce guide. Vérifiez les frais de chaque solution : le modèle financier compte 1 %.
 2. **Pages légales** : faire relire les trois textes par un professionnel du droit, adhérer à un médiateur de la consommation (obligatoire, souvent payant), puis lever chaque « [À COMPLÉTER] » et « [À CONFIRMER] » de [`docs/a-completer.md`](docs/a-completer.md) (règle d'annulation, accord entre responsables conjoints, transferts hors de l'Union européenne…).
    **Mesure d'audience** : créer le site dans Umami et renseigner `NEXT_PUBLIC_UMAMI_WEBSITE_ID` ([`docs/mesure-audience.md`](docs/mesure-audience.md)), après avoir revérifié les conditions de l'offre choisie.
-3. **Étape 9 — recette** : objectif Lighthouse mobile ≥ 90 ; le LCP simulé de l'accueil (2,8 s) est à ramener sous 2,5 s (voir [`docs/performances.md`](docs/performances.md)). Test du héros 3D sur un vrai téléphone.
+3. **Vérifier sur un vrai téléphone** : le héros 3D en mode complet (les mesures de la recette ont été faites sans carte graphique, donc en mode dégradé) et le parcours de réservation avec le clavier du téléphone.
 4. Logos officiels des moyens de paiement à télécharger sur les sites des émetteurs (ne pas les redessiner).
 5. Remplir toutes les valeurs « [À COMPLÉTER] » de `src/config/site.ts` (`npm run a-completer`).
