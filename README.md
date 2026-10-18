@@ -5,7 +5,7 @@ Next.js 16 (App Router), TypeScript, Tailwind CSS. Hébergement prévu : Netlify
 
 Le cahier des charges complet est dans [`docs/brief.md`](docs/brief.md), le plan validé dans [`docs/PLAN.md`](docs/PLAN.md).
 
-Site déployé sur Netlify : https://sensational-naiad-1eb7fc.netlify.app (projet privé pour l'instant : connectez-vous à Netlify pour le voir ; bouton « Make public » le jour du lancement).
+Site déployé sur Netlify : https://sensational-naiad-1eb7fc.netlify.app (production publique, encore non indexée par les moteurs de recherche ; les aperçus de branche restent réservés à l'équipe Netlify).
 
 ## Où en est le site
 
@@ -16,7 +16,7 @@ Site déployé sur Netlify : https://sensational-naiad-1eb7fc.netlify.app (proje
 | 7 — paiement en ligne (Stripe en mode test, PayPal en secours) | Fait (`main`), testé avec Stripe et PayPal simulés ; mise en route : [`docs/paiement.md`](docs/paiement.md) |
 | 8 — pages légales (mentions, CGV, confidentialité) et mesure d'audience Umami | Fait (`main`), testé ; textes à faire relire par un professionnel du droit ; mesure : [`docs/mesure-audience.md`](docs/mesure-audience.md) ; ce qui manque encore : [`docs/a-completer.md`](docs/a-completer.md) |
 | 9 — recette complète (Lighthouse, accessibilité, captures) | Fait (`main`) : 604 tests unitaires et 78 de bout en bout réussis ; Lighthouse mobile 93 à 98, accessibilité et bonnes pratiques 100, SEO 100 une fois l'indexation activée ([`docs/performances.md`](docs/performances.md), captures dans `docs/captures/etape-9/`) |
-| 10 — déploiement | `netlify.toml` prêt ; il reste à importer le dépôt dans Netlify (voir « Mettre le site en ligne ») |
+| 10 — déploiement | Fait : en ligne sur Netlify, Stripe en mode test (encaisseur A). Reste à saisir `ADMIN_PASSWORD`, le webhook Stripe et la clé Resend (voir « Reste à faire ») |
 
 Les pages /mentions-legales, /cgv et /confidentialite existent, mais ce sont des projets : elles affichent encore des « [À COMPLÉTER] » et des « [À CONFIRMER] » (liste complète dans [`docs/a-completer.md`](docs/a-completer.md), `npm run a-completer` pour voir ce qui reste). **Ne lancez pas le site auprès du public avant leur relecture par un professionnel du droit** : ces pages sont obligatoires.
 
