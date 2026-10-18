@@ -210,9 +210,9 @@ export const site = {
   url: (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, ""),
 
   /** Numéro affiché, par exemple « 06 12 34 56 78 ». */
-  telephone: "",
+  telephone: "06 11 02 48 56",
   /** Numéro WhatsApp au format international sans « + » ni espaces, par exemple « 33612345678 ». */
-  whatsapp: "",
+  whatsapp: "33611024856",
   email: "",
 
   reseaux: {

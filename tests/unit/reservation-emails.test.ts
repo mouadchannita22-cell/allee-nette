@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { ouACompleter, site } from "@/config/site";
 import { MESSAGE_DEMANDE_RECUE, RAPPELS_RENDEZ_VOUS } from "@/data/reservation";
 import { euros } from "@/lib/texte";
 import { devisReservation } from "@/lib/reservation/devis";
@@ -205,8 +206,9 @@ describe("e-mail au client", () => {
     expect(texte).toContain("Rien à payer maintenant");
     for (const rappel of RAPPELS_RENDEZ_VOUS) expect(texte).toContain(rappel);
     // Contacts non renseignés : emplacements visibles.
-    expect(texte).toContain("[À COMPLÉTER : téléphone]");
-    expect(texte).toContain("[À COMPLÉTER : numéro WhatsApp]");
+    // Valeurs de la configuration, ou emplacements « à compléter » si elles sont vides.
+    expect(texte).toContain(ouACompleter(site.telephone, "téléphone"));
+    if (!site.whatsapp) expect(texte).toContain("[À COMPLÉTER : numéro WhatsApp]");
     expect(html).toContain("Estimation");
   });
 

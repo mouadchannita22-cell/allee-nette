@@ -19,8 +19,8 @@ Une valeur vide (`""`) s'affiche en emplacement ; renseignée, elle apparaît pa
 
 | Valeur à renseigner | Emplacement affiché tant qu'elle est vide | Où il apparaît | Où trouver l'information |
 | --- | --- | --- | --- |
-| `site.telephone` | `[À COMPLÉTER : téléphone]` ; « Numéro à venir » dans la barre mobile | pied de page, /a-propos, /mentions-legales, /cgv et /confidentialite (contacts), contacts de la réservation, du remerciement et du paiement, e-mail au client, messages d'erreur | Le numéro de la ligne professionnelle que vous partagez, écrit comme il doit s'afficher : `06 12 34 56 78`. |
-| `site.whatsapp` | `[À COMPLÉTER : WhatsApp]`, `[À COMPLÉTER : numéro WhatsApp]`, `[À COMPLÉTER : WhatsApp ou e-mail]` (/professionnels, page masquée pour l'instant) ; « WhatsApp à venir » dans la barre mobile | pied de page, /a-propos, étape « Photos » de la réservation, page de remerciement, calculateur (hors zone), contacts du paiement, e-mail au client, messages d'erreur | Le numéro du compte WhatsApp (WhatsApp Business conseillé), au format international sans « + » ni espaces : `33612345678`. |
+| `site.telephone` | **Renseigné** : 06 11 02 48 56 (18/10/2026) | pied de page, /a-propos, pages légales, réservation, remerciement, paiement, e-mail au client | — |
+| `site.whatsapp` | **Renseigné** : même numéro, 33611024856 (18/10/2026) — vérifiez que WhatsApp est bien actif sur ce numéro | pied de page, /a-propos, réservation, remerciement, calculateur, paiement, e-mail au client | — |
 | `site.email` | `[À COMPLÉTER : e-mail]` | pied de page, /a-propos, /mentions-legales, /cgv et /confidentialite (contacts), contacts de la réservation et du paiement, e-mail au client | L'adresse de contact commune, sur votre domaine de préférence (`contact@…`). Elle sert aussi d'adresse de réponse des e-mails envoyés aux clients. |
 | `site.villeAssocies` | `[À COMPLÉTER : votre ville]` | accueil (« Qui sommes-nous »), /a-propos | La ville d'où vous venez, telle que vous voulez la présenter (« Deux étudiants entrepreneurs de … »). |
 
